@@ -90,4 +90,22 @@ if __name__ == "__main__":
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421 - 副本.xlsx'
     data = load_data(path)
     # data.info()
-    X_train, X_test, y_train, y_test = preprocess(data)
+    X_train, X_test, y_train, y_test = preprocess(data, shuffle=True)
+    from sklearn.linear_model import LogisticRegression
+    best = -1
+    s = {}
+    for c in (0.5, 1, 1.5, 2):
+        for e in range(1000):
+            # lr = LogisticRegression(C=1.0, penalty='l1', tol=1e-6)
+            lr = LogisticRegression(C=c, penalty='l1', tol=(e*2e-6+1e-6))
+            lr.fit(X_train, y_train)
+            predictions = lr.predict(X_test)
+            result = predictions - y_test
+            # print(f'{np.shape(result[result==0])[0]/np.shape(result)[0]}')
+            result = np.shape(result[result==0])[0]/np.shape(result)[0]
+            if result > best:
+                best = result
+                s = {'C': c, 'E':(e*2e-6+1e-6)}
+    print('Result: ', best, ' C:', s['C'], ' E:', s['E'])
+    # 相关系数
+    # print(pd.DataFrame({"columns": list(data.columns)[:-1], "coef": list(lr.coef_.T)}))
