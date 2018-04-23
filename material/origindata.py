@@ -64,9 +64,9 @@ def preprocess(df, shuffle=True):
     return X_train, X_test, y_train, y_test
 
 
-def deal_labels(y, categories=4, onehot:'是否使用onehot表示类别'=False):
+def deal_labels(y, categories:'需要分成几个类别'=4, onehot:'是否使用onehot表示类别'=False):
     """
-    将向量分类表示
+    将类别进行离散表示
     """
     # assert '<' not in str(y.dtype)
     min_ = np.min(y)
@@ -87,11 +87,34 @@ def deal_labels(y, categories=4, onehot:'是否使用onehot表示类别'=False):
     return y
 
 
+def compute_pearson(x, y):
+    """
+    计算pearson系数
+    :param x:
+    :param y:
+    :return:
+    """
+    pearson = []
+    for i in range(x.shape[1]):
+        x_ = np.hstack(x[:, i])
+        y_ = np.hstack(y)
+        pearson.append(np.corrcoef(x_, y_)[1, 0])
+    return pearson
+    pass
+
+
 if __name__ == "__main__":
-    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421 - 副本.xlsx'
+    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
+    # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     data = load_data(path)
     # data.info()
+
+    # 切分数据集
     X_train, X_test, y_train, y_test = preprocess(data, shuffle=True)
+
+    compute_pearson(np.append(X_train, X_test).reshape(-1,9), np.append(y_train, y_test))
+
+    # Logist回归
     from sklearn.linear_model import LogisticRegression
     best = -1
     s = {}
