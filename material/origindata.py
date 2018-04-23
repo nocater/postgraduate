@@ -23,7 +23,7 @@ def load_data(path):
 
     # 删除强度为空的行
     df = df[df.Y.notnull()]
-    print('Delet Y is null:', np.shape(df))
+    print('After delete NULL Y:', np.shape(df))
     # df.info()
 
     # 将列转为float errors={‘ignore’, ‘raise’, ‘coerce’} 返回数值 异常 置Nan
@@ -43,14 +43,14 @@ def load_data(path):
     return df
 
 
-def preprocess(df):
+def preprocess(df, shuffle=True):
     from sklearn.preprocessing import StandardScaler
     from sklearn.model_selection import train_test_split
     X = df.loc[:, 'C':'T3'].as_matrix()
     y = df[['Y']].as_matrix()
     y = deal_labels(y)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=shuffle)
 
     # 数据缩放
     scaler = StandardScaler()
@@ -62,7 +62,8 @@ def preprocess(df):
 
     return X_train, X_test, y_train, y_test
 
-def deal_labels(y, categories=4):
+
+def deal_labels(y, categories=4, onehot:'是否使用onehot表示类别'=False):
     """
     将向量分类表示
     """
@@ -76,9 +77,12 @@ def deal_labels(y, categories=4):
     y = [(bounds >= i).nonzero()[0][0] for i in y]
     # 编号下标从0开始
     y = y-np.array([1])
-    y = y.reshape(len(list(y)), 1)
-    enc = OneHotEncoder()
-    y = enc.fit_transform(y).toarray()
+    y = y.ravel()
+
+    # 是否使用onehot表示类别
+    if onehot:
+        enc = OneHotEncoder()
+        y = enc.fit_transform(y).toarray()
     return y
 
 
