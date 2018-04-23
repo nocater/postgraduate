@@ -44,12 +44,20 @@ def load_data(path):
     return df
 
 
-def preprocess(df, shuffle=True):
+def preprocess(df, shuffle=True, categories=4, onehot=False):
+    """
+    数据预处理 默认打乱 4分类 不使用onehot
+    :param df:
+    :param shuffle:
+    :param categories:
+    :param onehot:
+    :return:
+    """
     from sklearn.preprocessing import StandardScaler
     from sklearn.model_selection import train_test_split
     X = df.loc[:, 'C':'T3'].as_matrix()
     y = df[['Y']].as_matrix()
-    y = deal_labels(y)
+    y = deal_labels(y, categories=categories, onehot=onehot)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=shuffle)
 
@@ -112,24 +120,23 @@ if __name__ == "__main__":
     # 切分数据集
     X_train, X_test, y_train, y_test = preprocess(data, shuffle=True)
 
-    compute_pearson(np.append(X_train, X_test).reshape(-1,9), np.append(y_train, y_test))
+    # 计算pearson系数
+    # compute_pearson(np.append(X_train, X_test).reshape(-1,9), np.append(y_train, y_test))
 
     # Logist回归
     from sklearn.linear_model import LogisticRegression
-    best = -1
-    s = {}
-    for c in (0.5, 1, 1.5, 2):
-        for e in range(1000):
-            # lr = LogisticRegression(C=1.0, penalty='l1', tol=1e-6)
-            lr = LogisticRegression(C=c, penalty='l1', tol=(e*2e-6+1e-6))
-            lr.fit(X_train, y_train)
-            predictions = lr.predict(X_test)
-            result = predictions - y_test
-            # print(f'{np.shape(result[result==0])[0]/np.shape(result)[0]}')
-            result = np.shape(result[result==0])[0]/np.shape(result)[0]
-            if result > best:
-                best = result
-                s = {'C': c, 'E':(e*2e-6+1e-6)}
-    print('Result: ', best, ' C:', s['C'], ' E:', s['E'])
+    lr = LogisticRegression(C=1, penalty='l2', tol=1e-6)
+    lr.fit(X_train, y_train)
+    y_pred = lr.predict(X_test)
+    print(f'Train Acc: {lr.score(X_train, y_train):.2}  Test Acc:{lr.score(X_test, y_test):.2}')
+
+    #
+    from sklearn.metrics import precision_recall_fscore_support as score
+
+    precision, recall, fscore, support = score(y_test, y_pred)
+
+    table = pd.DataFrame({'precision': precision, 'recall': recall, 'fscore': fscore, 'support': support})
+    print(table)
+
     # 相关系数
     # print(pd.DataFrame({"columns": list(data.columns)[:-1], "coef": list(lr.coef_.T)}))
