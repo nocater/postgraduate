@@ -39,6 +39,7 @@ def load_data(path):
     # T2 转为Float 错误的先删除
     # df.T2 = pd.to_numeric(df.T2, errors='coerce')
     df = df[df.T2.notnull()]
+    # df.loc[:, 'T2'] = df.loc[:, 'T2'].fillna(value=25)
 
     return df
 
