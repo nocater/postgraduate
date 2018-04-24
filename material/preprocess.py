@@ -2,6 +2,7 @@ import openpyxl
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.utils import shuffle
 
 
 def getdata(file):
@@ -30,6 +31,7 @@ def getdata(file):
     # 删除强度为0的行数据
     retains = data[:, -1].nonzero()[0]
     data = data[retains, :]
+    data = shuffle(data)
 
     # 回归变成分类问题
     x = data[:, :-1]
