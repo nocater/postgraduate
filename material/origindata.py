@@ -14,7 +14,7 @@ def load_data(path):
 
     df = df[['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', '等温温度T2', '回火温度T3', '抗拉强度']]
     print('Origin shape:', np.shape(df))
-
+    print(df.shape[0] - df.count())
     # 重命名列名
     df = df.rename(columns={'等温温度T2': 'T2', '回火温度T3': 'T3', '抗拉强度': 'Y'})
 
@@ -90,6 +90,7 @@ def deal_labels(y, categories:'需要分成几个类别'=4, onehot:'是否使用
 
     # 是否使用onehot表示类别
     if onehot:
+        y = np.array(y).reshape(-1,1)
         enc = OneHotEncoder()
         y = enc.fit_transform(y).toarray()
     return y
@@ -111,10 +112,19 @@ def compute_pearson(x, y):
     pass
 
 
+def drawpic(df):
+    from matplotlib import pyplot as plt
+    plt.scatter(df.C, df.Y)
+    plt.title('Carbon and tensile strength relationship scatter plot')
+    plt.xlabel('Carbon content (wt.%)')
+    plt.ylabel('Tensile Strength (MPa)')
+    plt.show()
+
 if __name__ == "__main__":
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     data = load_data(path)
+    drawpic(data)
     # data.info()
 
     # 切分数据集
@@ -130,13 +140,15 @@ if __name__ == "__main__":
     y_pred = lr.predict(X_test)
     print(f'Train Acc: {lr.score(X_train, y_train):.2}  Test Acc:{lr.score(X_test, y_test):.2}')
 
-    #
+    # 计算F1 Recall support
     from sklearn.metrics import precision_recall_fscore_support as score
-
     precision, recall, fscore, support = score(y_test, y_pred)
-
     table = pd.DataFrame({'precision': precision, 'recall': recall, 'fscore': fscore, 'support': support})
     print(table)
+
+    # 计算MAE RMES
+    from sklearn.metrics import mean_absolute_error
+    # print(np.equal(y_test, y_pred))
 
     # 相关系数
     # print(pd.DataFrame({"columns": list(data.columns)[:-1], "coef": list(lr.coef_.T)}))

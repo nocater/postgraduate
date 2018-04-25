@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-import preprocess
+from material.origindata import load_data, preprocess
 
 
 INPUT_NODES = 0
@@ -61,16 +61,27 @@ def train(x_train, y_train, x_test, y_test):
 
 def main(argv=None):
     global INPUT_NODES, OUTPUT_NODES
-    x, y = preprocess.getdata(r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai.xlsx')
-    INPUT_NODES = x.shape[1]
-    OUTPUT_NODES = y.shape[1]
-    x_train = x[:-80, :]
-    y_train = y[:-80, :]
-    x_test = x[-80:, :]
-    y_test = y[-80:, :]
-    # print(x_train[0])
-    # print(y_train[0])
-    train(x_train, y_train, x_test, y_test)
+    # 第一次数据
+    # x, y = preprocess.getdata(r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai.xlsx')
+    # INPUT_NODES = x.shape[1]
+    # OUTPUT_NODES = y.shape[1]
+    # x_train = x[:-80, :]
+    # y_train = y[:-80, :]
+    # x_test = x[-80:, :]
+    # y_test = y[-80:, :]
+    # # print(x_train[0])
+    # # print(y_train[0])
+    # train(x_train, y_train, x_test, y_test)
+
+    # 第二次数据
+    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
+    data = load_data(path)
+    # data.info()
+    # 切分数据集
+    X_train, X_test, y_train, y_test = preprocess(data, shuffle=True, onehot=True)
+    INPUT_NODES = np.shape(X_train)[1]
+    OUTPUT_NODES = np.shape(y_train)[1]
+    train(X_train, y_train, X_test, y_test)
 
 
 if __name__ == '__main__':
