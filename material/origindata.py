@@ -144,10 +144,10 @@ def evaluate(y, y_pred):
 
 
 if __name__ == "__main__":
-    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
-    # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
+    # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
+    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     data = load_data(path)
-    # drawpic(data)
+    drawpic(data)
     # data.info()
 
     # 切分数据集

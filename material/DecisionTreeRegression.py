@@ -128,7 +128,7 @@ def drawpic(df):
     plt.show()
 
 
-def evaluate(y, y_pred):
+def evaluate_classifier(y, y_pred):
     """
     评估
     :param y:
@@ -143,12 +143,24 @@ def evaluate(y, y_pred):
     return table
 
 
+def ecaluate_regression(y, y_pred):
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+    y = y.ravel()
+    y_pred = y_pred.ravel()
+    print(y[:10])
+    print(y_pred[:10])
+    print(f'MAE:{mean_absolute_error(y, y_pred)}')
+    print(f'MSE:{mean_squared_error(y, y_pred)}')
+    print(f'RMSE:{np.sqrt(mean_squared_error(y, y_pred))}')
+    pass
+
+
 if __name__ == "__main__":
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     data = load_data(path)
     # drawpic(data)
-    # data.info()
+    data.info()
 
     train_accs = []
     test_accs = []
@@ -157,7 +169,7 @@ if __name__ == "__main__":
     # 切分数据集
     X_train, X_test, y_train, y_test = preprocess(data, shuffle=True)
 
-    for i in range(10):
+    for i in range(1):
         from sklearn.tree import DecisionTreeRegressor
         from sklearn.model_selection import cross_val_score
         dtr = DecisionTreeRegressor(random_state=0)
@@ -167,11 +179,12 @@ if __name__ == "__main__":
         test_acc = dtr.score(X_test, y_test)
         train_accs.append(train_acc)
         test_accs.append(test_acc)
-        print(f'Train Acc: {train_acc:.2}  Test Acc:{test_acc:.2}')
+        print(f'Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
         # print(dtr.feature_importances_)
         es.append(dtr.feature_importances_)
+        ecaluate_regression(y_test, y_pred)
 
-    print(f'Train Acc mean:{np.mean(train_accs):.2} Test Acc mean:{np.mean(test_accs):.2}')
+    print(f'Train Score mean:{np.mean(train_accs):.2} Test Score mean:{np.mean(test_accs):.2}')
     print(f'Feature_importances mean:')
     df_importance = pd.DataFrame({'Gini':np.mean(es, axis=0)}, index=data.columns[:-1])
     df_importance = df_importance.sort_values(by='Gini', ascending=False)
