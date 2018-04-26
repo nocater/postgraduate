@@ -82,6 +82,13 @@ def deal_labels(y, categories:'需要分成几个类别'=4, onehot:'是否使用
     # 设置分类边界
     bounds = np.linspace(min_-1, max_, categories+1)
     print('类别统计:', np.histogram(y, bounds)[0])
+    # 画图
+    # from matplotlib import pyplot as plt
+    # plt.hist(y, bounds)
+    # plt.title('Split Data with 4 categories')
+    # plt.xlabel('Tensile Strength')
+    # plt.ylabel('Count')
+    # plt.show()
     # 转换类别编号
     y = [(bounds >= i).nonzero()[0][0] for i in y]
     # 编号下标从0开始
@@ -120,11 +127,27 @@ def drawpic(df):
     plt.ylabel('Tensile Strength (MPa)')
     plt.show()
 
+
+def evaluate(y, y_pred):
+    """
+    评估
+    :param y:
+    :param y_predt:
+    :return:
+    """
+    # 计算F1 Recall support
+    from sklearn.metrics import precision_recall_fscore_support as score
+    precision, recall, fscore, support = score(y_test, y_pred)
+    table = pd.DataFrame({'precision': precision, 'recall': recall, 'fscore': fscore, 'support': support})
+    print(table)
+    return table
+
+
 if __name__ == "__main__":
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     data = load_data(path)
-    drawpic(data)
+    # drawpic(data)
     # data.info()
 
     # 切分数据集
@@ -133,22 +156,19 @@ if __name__ == "__main__":
     # 计算pearson系数
     # compute_pearson(np.append(X_train, X_test).reshape(-1,9), np.append(y_train, y_test))
 
+    # 计算信息增益
+    from material import compute_IG
+    # ig = InformationGain(np.append(X_train, X_test).reshape(-1,9), np.append(y_train, y_test))
+    # print(ig.get_result())
+    X = np.array([[1, 0, 0, 1], [0, 1, 1, 1], [0, 0, 1, 0]])
+    y = [0, 0, 1]
+    ig = compute_IG.InformationGain(X, y)
+    print(ig.get_result())
+
     # Logist回归
     from sklearn.linear_model import LogisticRegression
     lr = LogisticRegression(C=1, penalty='l2', tol=1e-6)
     lr.fit(X_train, y_train)
     y_pred = lr.predict(X_test)
     print(f'Train Acc: {lr.score(X_train, y_train):.2}  Test Acc:{lr.score(X_test, y_test):.2}')
-
-    # 计算F1 Recall support
-    from sklearn.metrics import precision_recall_fscore_support as score
-    precision, recall, fscore, support = score(y_test, y_pred)
-    table = pd.DataFrame({'precision': precision, 'recall': recall, 'fscore': fscore, 'support': support})
-    print(table)
-
-    # 计算MAE RMES
-    from sklearn.metrics import mean_absolute_error
-    # print(np.equal(y_test, y_pred))
-
-    # 相关系数
-    # print(pd.DataFrame({"columns": list(data.columns)[:-1], "coef": list(lr.coef_.T)}))
+    evaluate(y, y_pred)
