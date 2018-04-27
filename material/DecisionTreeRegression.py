@@ -156,8 +156,8 @@ def ecaluate_regression(y, y_pred):
 
 
 if __name__ == "__main__":
-    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
-    # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
+    # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
+    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     data = load_data(path)
     # drawpic(data)
     data.info()
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     es = []
     # for i in range(10):
     # 切分数据集
-    X_train, X_test, y_train, y_test = preprocess(data, shuffle=True)
+    X_train, X_test, y_train, y_test = preprocess(data, shuffle=False)
 
     for i in range(1):
         from sklearn.tree import DecisionTreeRegressor
