@@ -51,7 +51,6 @@ class feature_energing:
 
         ## 数据处理
         df = df.fillna(value=0)
-        if self.info: print('原始数据信息：');df.info()
 
         # 转成Float
         df = df.loc[:, :].apply(pd.to_numeric, errors='coerce')
@@ -107,7 +106,7 @@ class feature_energing:
         mins = np.min(df, axis=0)
         maxs = np.max(df, axis=0)
         self.target_range = pd.DataFrame([mins, maxs], index=['min:', 'max'], columns=self.colomns)
-        if self.info:print('处理数据范围:', self.target_range, sep='\n')
+        if self.info:print('处理后各维度范围:', self.target_range, sep='\n')
 
         self.X_train = X_train
         self.y_trian = y_train
@@ -195,11 +194,13 @@ def evaluate_regression(y, y_pred):
     from sklearn.metrics import mean_absolute_error, mean_squared_error
     y = y.ravel()
     y_pred = y_pred.ravel()
-    print(y[:10])
-    print(y_pred[:10])
-    print(f'MAE:{mean_absolute_error(y, y_pred)}')
-    print(f'MSE:{mean_squared_error(y, y_pred):.0}')
-    print(f'RMSE:{np.sqrt(mean_squared_error(y, y_pred)):.0}')
+    print(f'MAE:{int(mean_absolute_error(y, y_pred))}')
+    print(f'MSE:{int(mean_squared_error(y, y_pred))}')
+    print(f'RMSE:{int(np.sqrt(mean_squared_error(y, y_pred)))}')
+    print('抽样随机结果对比：')
+    index = np.random.randint(1, 401)
+    print(y[index:index+10])
+    print(y_pred[index:index+10])
     pass
 
 
