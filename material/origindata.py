@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 class feature_energing:
     def __init__(self, file,
-                    colomns:'选取的数据维度' = ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', '等温温度T2', '回火温度T3', '抗拉强度'],
+                    columns:'选取的数据维度' = ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', '等温温度T2', '回火温度T3', '抗拉强度'],
                     scaler:'是否采用数据缩放' = StandardScaler,
                     regression = True,
                     shuffle:''= True,
@@ -21,7 +21,7 @@ class feature_energing:
                               'Y':[900, 2500],
                               },
                  ):
-        self.colomns = colomns
+        self.columns = columns
         self.sclaer = scaler
         self.regression = regression
         self.shuffle = shuffle
@@ -40,9 +40,8 @@ class feature_energing:
         """
         if self.info:print('对数据进行回归处理' if self.regression else '对数据进行分类处理')
 
-        df = self.origin_df[self.colomns]
+        df = self.origin_df[self.columns]
         if self.info:
-            print('原始数据：', np.shape(df))
             print('列名:', df.columns)
             df.info()
 
@@ -58,25 +57,25 @@ class feature_energing:
         # 强度处理
         df = df[df.Y >= self.ranges['Y'][0]]
         df = df[df.Y <= self.ranges['Y'][1]]
-        print('--Del Y not in range:', np.shape(df))
+        if self.info:print('--Del Y not in range:', np.shape(df))
 
         # C处理 Nan的为不是数字的
         df = df[df.C.notnull()]
         df = df[df.C >= self.ranges['C'][0]]
         df = df[df.C <= self.ranges['C'][1]]
-        print('--Del C not in range:', np.shape(df))
+        if self.info:print('--Del C not in range:', np.shape(df))
 
         #
         df = df[df.T2.notnull()]
         # df = df[df.T2 >= self.ranges['T2'][0]]
         # df = df[df.T2 <= self.ranges['T2'][1]]
-        print('--Del T2 None', np.shape(df))
+        if self.info:print('--Del T2 None', np.shape(df))
 
         #
         df.loc[(df.T3 == 0), 'T3'] = 25
         df = df[df.T3 >= self.ranges['T3'][0]]
         df = df[df.T3 <= self.ranges['T3'][1]]
-        print('--Del T3 not in range:', np.shape(df))
+        if self.info:print('--Del T3 not in range:', np.shape(df))
 
         # 其它元素位置 None填充0
         df = df.fillna(value=0)
@@ -85,13 +84,15 @@ class feature_energing:
         # 各维度最大最小值
         mins = np.min(df, axis=0)
         maxs = np.max(df, axis=0)
-        self.origin_range = pd.DataFrame([mins, maxs], index=['min:', 'max'], columns=self.colomns)
+        self.origin_range = pd.DataFrame([mins, maxs], index=['min:', 'max'], columns=self.columns)
         # if self.info: print('原始数据范围:', self.origin_range, sep='\n')
 
         X = df.iloc[:, :-1].as_matrix()
         y = df.Y.as_matrix()
         if not self.regression:     # 非回归处理label
             y = self.deal_labels(y)
+
+        self.target_df = df
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=self.shuffle, random_state=self.random_seed)
 
@@ -105,7 +106,7 @@ class feature_energing:
         # 各维度最大最小值
         mins = np.min(df, axis=0)
         maxs = np.max(df, axis=0)
-        self.target_range = pd.DataFrame([mins, maxs], index=['min:', 'max'], columns=self.colomns)
+        self.target_range = pd.DataFrame([mins, maxs], index=['min:', 'max'], columns=df.columns)
         if self.info:print('处理后各维度范围:', self.target_range, sep='\n')
 
         self.X_train = X_train
@@ -198,9 +199,9 @@ def evaluate_regression(y, y_pred):
     print(f'MSE:{int(mean_squared_error(y, y_pred))}')
     print(f'RMSE:{int(np.sqrt(mean_squared_error(y, y_pred)))}')
     print('抽样随机结果对比：')
-    index = np.random.randint(1, 401)
-    print(y[index:index+10])
-    print(y_pred[index:index+10])
+    index = np.random.randint(1, 100)
+    result = pd.DataFrame([y[index:index+5], y_pred[index:index+5]], index=['y', 'y_pred'])
+    print(result)
     pass
 
 
@@ -208,7 +209,7 @@ if __name__ == "__main__":
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
 
-    fe = feature_energing(file=path, regression=False, info=True)
+    fe = feature_energing(file=path, regression=False, info=False)
     # X_train, X_test, y_train, y_test = fe.preprocess()
 
     # Logist回归
@@ -222,7 +223,7 @@ if __name__ == "__main__":
     from sklearn.tree import DecisionTreeRegressor
     fe.regression=True
     X_train, X_test, y_train, y_test = fe.preprocess()
-    dtr = DecisionTreeRegressor(random_state=1, max_features='sqrt')
+    dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt')
     dtr.fit(X_train, y_train)
     y_pred = dtr.predict(X_test)
     train_acc = dtr.score(X_train, y_train)
