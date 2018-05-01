@@ -22,7 +22,7 @@ def train(x_train, y_train, x_test, y_test):
     weights2 = tf.Variable(tf.truncated_normal([LAYER1_NODE, OUTPUT_NODES], stddev=0.1))
     biases2 = tf.Variable(tf.constant(0.1, shape=[OUTPUT_NODES]))
 
-    layer1 = tf.nn.relu(tf.matmul(x, weights1)+biases1)
+    layer1 = tf.nn.tanh(tf.matmul(x, weights1)+biases1)
     y = tf.matmul(layer1, weights2)+biases2
     # y = tf.Print(y, [y], 'Current Result:')
 
@@ -58,6 +58,7 @@ def train(x_train, y_train, x_test, y_test):
             sess.run(train_op, feed_dict={x: xs, y_: ys})
             loss_val, acc_val = sess.run([loss,acc], feed_dict={x:x_test, y_:y_test})
             print('Acc :%.2f'%(acc_val*100), '%  Loss :', loss_val)
+
 
 def main(argv=None):
     global INPUT_NODES, OUTPUT_NODES
