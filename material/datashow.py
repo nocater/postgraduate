@@ -15,10 +15,11 @@ def show_distribute(path):
     for col in df.columns:
         index += 1
         plt.figure(index)
-        plt.xlabel(col)
-        plt.ylabel('')
+        plt.xlabel(str(col)+' element')
+        plt.ylabel('Count')
         plt.hist(df[col].values, bins=50)
     plt.show()
+
 
 if __name__ == '__main__':
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
