@@ -97,7 +97,7 @@ class feature_energing:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=self.shuffle, random_state=self.random_seed)
 
         # 数据缩放
-        if self.regression:
+        if not self.regression:
             scaler = self.sclaer()
             scaler = scaler.fit(X_train)
             X_train = scaler.transform(X_train)
@@ -231,3 +231,4 @@ if __name__ == "__main__":
     print(f'CART: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
     evaluate_regression(y_test, y_pred)
     print(dtr.tree_.max_depth)
+    print(fe.origin_range)
