@@ -201,7 +201,7 @@ def evaluate_regression(y, y_pred):
     print('抽样随机结果对比：')
     index = np.random.randint(1, 100)
     result = pd.DataFrame([y[index:index+5], y_pred[index:index+5]], index=['y', 'y_pred'])
-    print(result)
+    # print(result)
     pass
 
 
@@ -251,3 +251,17 @@ if __name__ == "__main__":
     print('测试集评估：')
     evaluate_regression(y_test, teset_pred)
 
+    #
+    # print('LRCV')
+    # from sklearn.linear_model import LogisticRegressionCV
+    # lrcv = LogisticRegressionCV(Cs=1e-2)
+    # lrcv.fit(X_train, y_train)
+    # train_pred = lrcv.predict(X_train)
+    # test_pred = lrcv.predict(X_test)
+    # train_acc = lrcv.score(X_train, y_train)
+    # test_acc = lrcv.score(X_test, y_test)
+    # print(f'GBDT: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
+    # print('训练集评估：')
+    # evaluate_regression(y_train, train_pred)
+    # print('测试集评估：')
+    # evaluate_regression(y_test, teset_pred)
