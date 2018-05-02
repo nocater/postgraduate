@@ -226,14 +226,14 @@ if __name__ == "__main__":
     dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt', criterion='mae')
     dtr.fit(X_train, y_train)
     train_pred = dtr.predict(X_train)
-    teset_pred = dtr.predict(X_test)
+    test_pred = dtr.predict(X_test)
     train_acc = dtr.score(X_train, y_train)
     test_acc = dtr.score(X_test, y_test)
     print(f'CART: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
     print('训练集评估：')
     evaluate_regression(y_train, train_pred)
     print('测试集评估：')
-    evaluate_regression(y_test, teset_pred)
+    evaluate_regression(y_test, test_pred)
     print(dtr.tree_.max_depth)
 
     #
@@ -249,7 +249,7 @@ if __name__ == "__main__":
     print('训练集评估：')
     evaluate_regression(y_train, train_pred)
     print('测试集评估：')
-    evaluate_regression(y_test, teset_pred)
+    evaluate_regression(y_test, test_pred)
 
     #
     # print('LRCV')
@@ -265,3 +265,18 @@ if __name__ == "__main__":
     # evaluate_regression(y_train, train_pred)
     # print('测试集评估：')
     # evaluate_regression(y_test, teset_pred)
+
+    # Enseble Methods
+    print('XGB----------')
+    from xgboost import XGBRegressor
+    xgb = XGBRegressor()
+    xgb.fit(X_train, y_train)
+    train_pred = xgb.predict(X_train)
+    test_pred = xgb.predict(X_test)
+    train_acc = xgb.score(X_train, y_train)
+    test_acc = xgb.score(X_test, y_test)
+    print(f'XGB: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
+    print('训练集评估：')
+    evaluate_regression(y_train, train_pred)
+    print('测试集评估：')
+    evaluate_regression(y_test, test_pred)
