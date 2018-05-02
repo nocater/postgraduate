@@ -223,7 +223,7 @@ if __name__ == "__main__":
     from sklearn.tree import DecisionTreeRegressor
     fe.regression=True
     X_train, X_test, y_train, y_test = fe.preprocess()
-    dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt')
+    dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt', criterion='mae')
     dtr.fit(X_train, y_train)
     train_pred = dtr.predict(X_train)
     teset_pred = dtr.predict(X_test)
@@ -235,3 +235,19 @@ if __name__ == "__main__":
     print('测试集评估：')
     evaluate_regression(y_test, teset_pred)
     print(dtr.tree_.max_depth)
+
+    #
+    print('GBDT----------')
+    from sklearn.ensemble import GradientBoostingRegressor
+    gbr = GradientBoostingRegressor(random_state=10)
+    gbr.fit(X_train, y_train)
+    train_pred = gbr.predict(X_train)
+    test_pred = gbr.predict(X_test)
+    train_acc = gbr.score(X_train, y_train)
+    test_acc = gbr.score(X_test, y_test)
+    print(f'GBDT: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
+    print('训练集评估：')
+    evaluate_regression(y_train, train_pred)
+    print('测试集评估：')
+    evaluate_regression(y_test, teset_pred)
+
