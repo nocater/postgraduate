@@ -9,12 +9,12 @@ class feature_energing:
     def __init__(self, file,
                     columns:'选取的数据维度' = ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', '等温温度T2', '回火温度T3', '抗拉强度'],
                     scaler:'是否采用数据缩放' = StandardScaler,
-                    regression = True,
+                    regression:'用于分类还是回归'= True,
                     shuffle:''= True,
                     random_seed:''= 1,
-                    categories = 4,
-                    onehot = False,
-                    info = True,
+                    categories:'分类类别' = 4,
+                    onehot:'是否使用onehot'= False,
+                    info:'是否打印信息' = True,
                     ranges:'数据范围'= {'C':[0, 1.2],
                               'Si':[0, 4],
                               'T3':[25, 450],
@@ -30,7 +30,7 @@ class feature_energing:
         self.onehot = onehot
         self.info = info
         self.ranges = ranges
-        self.origin_df = pd.read_excel(file, header=2, nrow=4)
+        self.origin_df = pd.read_excel(file, header=2)
         pass
 
     def preprocess(self):
@@ -206,77 +206,8 @@ def evaluate_regression(y, y_pred):
 
 
 if __name__ == "__main__":
-    path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180421_pd.xlsx'
-    # path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-chenshuai_pd.xlsx'
+    # path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180421_pd.xlsx'
+    path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
 
-    fe = feature_energing(file=path, regression=False, info=False)
-    # X_train, X_test, y_train, y_test = fe.preprocess()
-
-    # Logist回归
-    # from sklearn.linear_model import LogisticRegression
-    # lr = LogisticRegression(C=1, penalty='l2', tol=1e-6)
-    # lr.fit(X_train, y_train)
-    # y_pred = lr.predict(X_test)
-    # print(f'Logist: Train Acc: {lr.score(X_train, y_train):.2}  Test Acc:{lr.score(X_test, y_test):.2}')
-    # evaluate_classifier(y_test, y_pred)
-
-    from sklearn.tree import DecisionTreeRegressor
-    fe.regression=True
-    X_train, X_test, y_train, y_test = fe.preprocess()
-    dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt', criterion='mae')
-    dtr.fit(X_train, y_train)
-    train_pred = dtr.predict(X_train)
-    test_pred = dtr.predict(X_test)
-    train_acc = dtr.score(X_train, y_train)
-    test_acc = dtr.score(X_test, y_test)
-    print(f'CART: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
-    print('训练集评估：')
-    evaluate_regression(y_train, train_pred)
-    print('测试集评估：')
-    evaluate_regression(y_test, test_pred)
-    print(dtr.tree_.max_depth)
-
-    #
-    print('GBDT----------')
-    from sklearn.ensemble import GradientBoostingRegressor
-    gbr = GradientBoostingRegressor(random_state=10)
-    gbr.fit(X_train, y_train)
-    train_pred = gbr.predict(X_train)
-    test_pred = gbr.predict(X_test)
-    train_acc = gbr.score(X_train, y_train)
-    test_acc = gbr.score(X_test, y_test)
-    print(f'GBDT: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
-    print('训练集评估：')
-    evaluate_regression(y_train, train_pred)
-    print('测试集评估：')
-    evaluate_regression(y_test, test_pred)
-
-    #
-    # print('LRCV')
-    # from sklearn.linear_model import LogisticRegressionCV
-    # lrcv = LogisticRegressionCV(Cs=1e-2)
-    # lrcv.fit(X_train, y_train)
-    # train_pred = lrcv.predict(X_train)
-    # test_pred = lrcv.predict(X_test)
-    # train_acc = lrcv.score(X_train, y_train)
-    # test_acc = lrcv.score(X_test, y_test)
-    # print(f'GBDT: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
-    # print('训练集评估：')
-    # evaluate_regression(y_train, train_pred)
-    # print('测试集评估：')
-    # evaluate_regression(y_test, teset_pred)
-
-    # Enseble Methods
-    print('XGB----------')
-    from xgboost import XGBRegressor
-    xgb = XGBRegressor()
-    xgb.fit(X_train, y_train)
-    train_pred = xgb.predict(X_train)
-    test_pred = xgb.predict(X_test)
-    train_acc = xgb.score(X_train, y_train)
-    test_acc = xgb.score(X_test, y_test)
-    print(f'XGB: Train Score: {train_acc:.2}  Test Score:{test_acc:.2}')
-    print('训练集评估：')
-    evaluate_regression(y_train, train_pred)
-    print('测试集评估：')
-    evaluate_regression(y_test, test_pred)
+    fe = feature_energing(file=path, regression=True)
+    fe.preprocess()
