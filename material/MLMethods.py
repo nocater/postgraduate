@@ -52,14 +52,18 @@ def generate_models():
 
 if __name__=='__main__':
     BASE_PATH = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总2018'
-    files = ['0502']
-    fes = [feature_energing(BASE_PATH+file+'.xlsx', info=False, regression=True) for file in files]
+    files = ['0421', '0502']
+    # 所有的回归模型
     regressions = generate_models()
-    df_r2 = []
-    df_eva = []
+    # 每次数据集的结果
+    results = []
 
-    for fe in fes:
+    for file in files:
+        print('数据集：',file)
+        fe = feature_energing(BASE_PATH + file + '.xlsx', info=False, regression=True)
         X_train, X_test, y_train, y_test = fe.preprocess()
+        df_r2 = []
+        df_eva = []
         for k,v in regressions.items():
             v.fit(X_train, y_train)
             train_r2 = v.score(X_train, y_train)
@@ -91,3 +95,4 @@ if __name__=='__main__':
         # print(df_eva.T)
         tf_result = pd.concat([df_eva, df_r2], axis=1)
         print(tf_result)
+        results.append(tf_result)
