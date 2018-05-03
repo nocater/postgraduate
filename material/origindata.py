@@ -186,7 +186,7 @@ def evaluate_classifier(y, y_pred):
     """
     # 计算F1 Recall support
     from sklearn.metrics import precision_recall_fscore_support as score
-    precision, recall, fscore, support = score(y_test, y_pred)
+    precision, recall, fscore, support = score(y, y_pred)
     table = pd.DataFrame({'precision': precision, 'recall': recall, 'fscore': fscore, 'support': support})
     print(table)
     return table
