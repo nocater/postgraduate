@@ -31,6 +31,7 @@ class feature_energing:
         self.info = info
         self.ranges = ranges
         self.origin_df = pd.read_excel(file, header=2)
+        self.origin_df = self.origin_df[self.origin_df.index.notnull()]
         pass
 
     def preprocess(self):
@@ -209,5 +210,7 @@ if __name__ == "__main__":
     # path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180421_pd.xlsx'
     path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
 
+    # 查看第三次仅仅增加数据的信息
     fe = feature_energing(file=path, regression=True)
+    fe.origin_df = fe.origin_df.drop([x for x in range(1, 990)])
     fe.preprocess()
