@@ -30,7 +30,7 @@ class feature_energing:
         self.onehot = onehot
         self.info = info
         self.ranges = ranges
-        self.origin_df = pd.read_excel(file)
+        self.origin_df = pd.read_excel(file, header=2, nrow=4)
         pass
 
     def preprocess(self):
@@ -206,8 +206,8 @@ def evaluate_regression(y, y_pred):
 
 
 if __name__ == "__main__":
-    path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
-    # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
+    path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
+    # path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-chenshuai_pd.xlsx'
 
     fe = feature_energing(file=path, regression=False, info=False)
     # X_train, X_test, y_train, y_test = fe.preprocess()

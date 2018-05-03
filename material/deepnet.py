@@ -6,6 +6,7 @@ from material.origindata import feature_energing
 INPUT_NODES = 0
 OUTPUT_NODES = 0
 LAYER1_NODE = 100
+LAYER2_NODE = 100
 BATCH_SIZE = 20
 LEARNING_RATE_BASE = 0.9    # 0.8
 LEARNING_RATE_DECAY = 0.99  # 0.99
@@ -19,11 +20,15 @@ def train(x_train, y_train, x_test, y_test):
     weights1 = tf.Variable(tf.truncated_normal([INPUT_NODES, LAYER1_NODE], stddev=0.1))
     biases1 = tf.Variable(tf.constant(0.1, shape=[LAYER1_NODE]))
 
-    weights2 = tf.Variable(tf.truncated_normal([LAYER1_NODE, OUTPUT_NODES], stddev=0.1))
-    biases2 = tf.Variable(tf.constant(0.1, shape=[OUTPUT_NODES]))
+    weights2 = tf.Variable(tf.truncated_normal([LAYER1_NODE, LAYER2_NODE], stddev=0.1))
+    biases2 = tf.Variable(tf.constant(0.1, shape=[LAYER2_NODE]))
+
+    weights3 = tf.Variable(tf.truncated_normal([LAYER2_NODE, OUTPUT_NODES], stddev=0.1))
+    biases3 = tf.Variable(tf.constant(0.1, shape=[OUTPUT_NODES]))
 
     layer1 = tf.nn.tanh(tf.matmul(x, weights1)+biases1)
-    y = tf.matmul(layer1, weights2)+biases2
+    layer2 = tf.nn.tanh(tf.matmul(layer1, weights2)+biases2)
+    y = tf.matmul(layer2, weights3)+biases3
     # y = tf.Print(y, [y], 'Current Result:')
 
     # 计算欧氏距离
@@ -31,7 +36,7 @@ def train(x_train, y_train, x_test, y_test):
 
     # 正则器
     regularizer = tf.contrib.layers.l2_regularizer(REGULARIZATION_RATE)
-    regularization = regularizer(weights1) + regularizer(weights2)
+    regularization = regularizer(weights1) + regularizer(weights2) + regularizer(weights3)
 
     loss = euclidean + regularization
     # 设置指数衰减的学习率
@@ -64,7 +69,7 @@ def main(argv=None):
     global INPUT_NODES, OUTPUT_NODES
     path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
-    fe = feature_energing(file=path, regression=False, info=False, onehot=True)
+    fe = feature_energing(file=path, regression=False, info=False, onehot=True, shuffle=True)
     X_train, X_test, y_train, y_test = fe.preprocess()
     INPUT_NODES = np.shape(X_train)[1]
     OUTPUT_NODES = np.shape(y_train)[1]
