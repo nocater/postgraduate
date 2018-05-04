@@ -96,3 +96,4 @@ if __name__=='__main__':
         tf_result = pd.concat([df_eva, df_r2], axis=1)
         print(tf_result)
         results.append(tf_result)
+        # tf_result.to_csv(r'C:\Users\chenshuai\Documents\材料学院\data\mothods_result.csv')
