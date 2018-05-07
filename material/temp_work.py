@@ -5,11 +5,11 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 NEED_COLUMS = ['T','theta','G','W']
 
-df = pd.read_excel(r'C:\Users\chenshuai\Documents\材料学院\贝氏体板条宽度W公式拟合.xlsx')
+df = pd.read_excel(r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体板条宽度W公式拟合.xlsx')
 # print(df.columns)
 df = df.rename(columns=dict(zip(df.columns,['C','T','theta','G','W','from','other'])))
 df = df[NEED_COLUMS]
-df.loc[:, 'W'] = [x*1000 for x in df.loc[:, 'W']]
+df.W = df.W*1000
 
 x = df.iloc[:, :-1]
 y = df.W
@@ -30,7 +30,7 @@ print(parameters)
 
 result = pd.DataFrame([y.values, y_pred], index=['y', 'y_pred'])
 result = result.astype(int)
-result.T.to_csv(r'C:\Users\chenshuai\Documents\材料学院\贝氏体板条宽度W公式拟合结果.csv')
+# result.T.to_csv(r'C:\Users\chenshuai\Documents\材料学院\贝氏体板条宽度W公式拟合结果.csv')
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 print(f'MAE:{int(mean_absolute_error(y, y_pred))}')
