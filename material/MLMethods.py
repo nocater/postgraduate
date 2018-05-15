@@ -1,6 +1,8 @@
 import numpy as np
 from material.origindata import feature_energing
 import pandas as pd
+from sklearn.model_selection import cross_val_predict, cross_val_score
+import random
 
 
 def evaluate_classifier(y, y_pred):
@@ -12,7 +14,7 @@ def evaluate_classifier(y, y_pred):
     """
     # 计算F1 Recall support
     from sklearn.metrics import precision_recall_fscore_support as score
-    precision, recall, fscore, support = score(y_test, y_pred)
+    precision, recall, fscore, support = score(y, y_pred)
     table = pd.DataFrame({'precision': precision, 'recall': recall, 'fscore': fscore, 'support': support})
     print(table)
     return table
@@ -37,6 +39,9 @@ def evaluate_regression(y, y_pred):
 
 def generate_models():
     regressors = dict()
+    from sklearn.linear_model import LinearRegression
+    lr = LinearRegression()
+    regressors['lr'] = lr
     from sklearn.tree import DecisionTreeRegressor
     dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt', criterion='mae')
     regressors['dtr'] = dtr
@@ -62,9 +67,19 @@ if __name__=='__main__':
         print('数据集：',file)
         fe = feature_energing(BASE_PATH + file + '.xlsx', info=False, regression=True)
         X_train, X_test, y_train, y_test = fe.preprocess()
+        X = fe.X
+        Y = fe.Y
+        # 打乱数据集
+        xy = list(zip(X, Y))
+        random.shuffle(xy)
+        X[:], Y[:] = zip(*xy)
+
         df_r2 = []
         df_eva = []
         for k,v in regressions.items():
+
+            scores = cross_val_score(v, X, Y, cv=2, scoring='r2')
+            print(k,scores.mean())
             v.fit(X_train, y_train)
             train_r2 = v.score(X_train, y_train)
             test_r2 = v.score(X_test, y_test)
@@ -84,7 +99,7 @@ if __name__=='__main__':
         df_r2 = df_r2.astype(float)
         df_r2 = df_r2 / 100
         df_r2 = pd.DataFrame(df_r2, columns=['Train_r2', 'Test_r2'], index=regressions.keys())
-        # print(df_r2)
+        print(df_r2)
 
         # MAE
         df_eva = np.reshape(df_eva, (-1, 6))
@@ -92,7 +107,7 @@ if __name__=='__main__':
         df_eva = pd.DataFrame(df_eva, columns=['train_MAE','test_MAE','train_MSE',
                                                'test_MSE','train_RMSE','test_RMSE'],
                                       index=regressions.keys())
-        # print(df_eva.T)
+        print(df_eva.T)
         tf_result = pd.concat([df_eva, df_r2], axis=1)
         print(tf_result)
         results.append(tf_result)
