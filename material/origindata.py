@@ -97,7 +97,8 @@ class feature_energing:
 
         self.X = X
         self.Y = y
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=self.shuffle, random_state=self.random_seed)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=self.shuffle,
+                                                            random_state=self.random_seed)
 
         # 数据缩放
         if not self.regression:
