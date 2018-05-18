@@ -22,46 +22,53 @@ def evaluate_regression(y, y_pred):
 
 BASE_PATH = r'C:\Users\chenshuai\Documents\airquality'
 
+def generateQ():
+    """
+    生成季度数据表格
+    :return:
+    """
+    df = pd.read_csv(BASE_PATH+r'\chen2014-2017.csv')
+    df.date = pd.to_datetime(df.date)
+    first= None
+
+    for city in ['xt_', 'sjz_']:
+        datas = df.filter(regex='date|'+city+'*')
+        datas = datas.set_index('date')
+
+        # 第一季度
+        first = datas['2014-1-1':'2014-3-31']
+        for year in ['2015', '2016', '2017']:
+            tmp = datas[year + '-1-1':year + '-3-31']
+            first = pd.concat([first, tmp])
+        first.to_csv(BASE_PATH + r'\\'+city+'q1.csv')
+
+        # 第二季度
+        second = datas['2014-4-1':'2014-6-30']
+        for year in ['2015', '2016']:
+            tmp = datas[year + '-4-1':year + '-6-30']
+            second = pd.concat([second, tmp])
+        second.to_csv(BASE_PATH + r'\\' + city + 'q2.csv')
+
+        # 第三季度
+        third = datas['2014-7-1':'2014-9-30']
+        for year in ['2015', '2016']:
+            tmp = datas[year + '-7-1':year + '-9-30']
+            third = pd.concat([third, tmp])
+        third.to_csv(BASE_PATH + r'\\' + city + 'q3.csv')
+
+        # 第四季度
+        fourth = datas['2014-10-1':'2014-12-31']
+        for year in ['2015', '2016']:
+            tmp = datas[year + '-10-1':year + '-12-31']
+            fourth = pd.concat([fourth, tmp])
+        fourth.to_csv(BASE_PATH + r'\\' + city + 'q4.csv')
+
+        print(first.shape, second.shape, third.shape, fourth.shape)
 
 
-df = pd.read_csv(BASE_PATH+r'\chen2014-2017.csv')
-df.date = pd.to_datetime(df.date)
-first= None
-
-for city in ['xt_', 'sjz_']:
-    datas = df.filter(regex='date|'+city+'*')
-    datas = datas.set_index('date')
-
-    # 第一季度
-    first = datas['2014-1-1':'2014-3-31']
-    for year in ['2015', '2016', '2017']:
-        tmp = datas[year + '-1-1':year + '-3-31']
-        first = pd.concat([first, tmp])
-    first.to_csv(BASE_PATH + r'\\'+city+'q1.csv')
-
-    # 第二季度
-    second = datas['2014-4-1':'2014-6-30']
-    for year in ['2015', '2016']:
-        tmp = datas[year + '-4-1':year + '-6-30']
-        second = pd.concat([second, tmp])
-    second.to_csv(BASE_PATH + r'\\' + city + 'q2.csv')
-
-    # 第三季度
-    third = datas['2014-7-1':'2014-9-30']
-    for year in ['2015', '2016']:
-        tmp = datas[year + '-7-1':year + '-9-30']
-        third = pd.concat([third, tmp])
-    third.to_csv(BASE_PATH + r'\\' + city + 'q3.csv')
-
-    # 第四季度
-    fourth = datas['2014-10-1':'2014-12-31']
-    for year in ['2015', '2016']:
-        tmp = datas[year + '-10-1':year + '-12-31']
-        fourth = pd.concat([fourth, tmp])
-    fourth.to_csv(BASE_PATH + r'\\' + city + 'q4.csv')
-
-    print(first.shape, second.shape, third.shape, fourth.shape)
-
+first = pd.read_csv(BASE_PATH+r'\sjz_q1.csv')
+first.date = pd.to_datetime(first.date)
+first = first.set_index('date')
 
 first = first['2014-1-1':'2017-1-1']
 Y = first.sjz_pm2
@@ -72,7 +79,30 @@ dtr = DecisionTreeRegressor(random_state=3, max_features='sqrt', criterion='mse'
 dtr.fit(X_train, y_train)
 y_pred = dtr.predict(X_test)
 evaluate_regression(y_test, y_pred)
-print(dtr.score(X_test, y_test))
+print(f'R2:{dtr.score(X_test, y_test):.2f}')
 print(dtr.feature_importances_)
 
+from sklearn.linear_model import LinearRegression
+print()
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+y_pred = lr.predict(X_test)
+evaluate_regression(y_test, y_pred)
+print(f'R2:{lr.score(X_test, y_test):.2f}')
 
+
+from sklearn.ensemble import GradientBoostingRegressor
+print()
+gbr = GradientBoostingRegressor(random_state=10)
+gbr.fit(X_train, y_train)
+y_pred = gbr.predict(X_test)
+evaluate_regression(y_test, y_pred)
+print(f'R2:{gbr.score(X_test, y_test):.2f}')
+
+from xgboost import XGBRegressor
+print()
+xgb = XGBRegressor()
+xgb.fit(X_train, y_train)
+y_pred = xgb.predict(X_test)
+evaluate_regression(y_test, y_pred)
+print(f'R2:{xgb.score(X_test, y_test):.2f}')
