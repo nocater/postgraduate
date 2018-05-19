@@ -108,7 +108,7 @@ def getY_2017():
     df_y.date = pd.to_datetime(df_y.date)
     # 只保留年月日
     df_y.date = df_y.date.map(lambda x: x.strftime('%Y-%m-%d'))
-    df_y.info()
+    # df_y.info()
     return df_y
 
 
@@ -212,22 +212,34 @@ if __name__ == "__main__":
     df_ss = getStaticStability_2014()
     # 合并
     df = pd.merge(df_y, df_ss, how='left', on='date')
-    print(df.columns)
+    # print(df.columns)
     # 2014-7-[3,5,7,8,9] 的静稳数据没有  用前后数据填充
     df.loc[(df.sjz_staticstability.isnull()), 'sjz_staticstability'] = np.linspace(10.87,10.44,7)[1:-1]
     df.loc[(df.xt_staticstability.isnull()), 'xt_staticstability'] = np.linspace(10.64,10.32,7)[1:-1]
 
     df_qing = getQing_2014()
     df = pd.merge(df, df_qing, how='left', on='date')
-    # print(df.info(), df.shape)
     df_2014 = df
+    print(df.columns)
 
     df_2017 = getY_2017()
     df_ss_2017 = getStaticStability_2017()
     df_2017 = pd.merge(df_2017, df_ss_2017, how='left', on='date')
     df_qing_2017 = getQing_2017()
     df_2017 = pd.merge(df_2017, df_qing_2017, how='left', on='date')
+
+    df_2017.insert(15, column='sjz_high', value=np.nan)
+    df_2017.insert(16, column='sjz_ground_wind', value=np.nan)
+    df_2017.insert(17, column='xt_high', value=np.nan)
+    df_2017.insert(18, column='xt_ground_wind', value=np.nan)
+    print(df_2017.columns)
     df = pd.concat([df_2014, df_2017])
+    print(df.columns)
+
+    # 显示缺失值信息
+    # 去除七条空值数据
+    df = df[df.sjz_humidity.notnull()]
+    print(df.shape[0] - df.count())
 
     # #转换日期
     # df.date = pd.to_datetime(df.date)
