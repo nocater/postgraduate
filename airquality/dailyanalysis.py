@@ -89,8 +89,8 @@ df_q2_add = pd.DataFrame({
 df_q2 = df_q2.iloc[1:, :]
 df_q2 = df_q2[X_SJZ]
 df_q2_add.index = df_q2.index
-X_q2 = pd.concat([df_q2, df_q2_add], axis=1)  # 加三维度
-# X_q2 = df_q2                                    # 不加三个维度
+# X_q2 = pd.concat([df_q2, df_q2_add], axis=1)  # 加三维度
+X_q2 = df_q2                                    # 不加三个维度
 # X_q2 = df_q2_add                              # 只是用add三个维度
 # X_q2.info()
 
@@ -136,6 +136,8 @@ rfr.fit(X_train, y_train)
 y_pred = rfr.predict(X_test)
 print(f'R2_train:{rfr.score(X_train, y_train):.2f}')
 print(f'R2:{rfr.score(X_test, y_test):.2f}')
+print(X_q2.columns)
+print(rfr.feature_importances_)
 
 
 # from sklearn.model_selection import cross_val_score
