@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from sklearn import cross_validation, metrics
 
 
 BASE_PATH = r'C:\Users\chenshuai\Documents\airquality\\'
@@ -123,14 +122,14 @@ if False:
     # Y_pm2 = Y_pm2.ravel()
 
 X_train, X_test, y_train, y_test = train_test_split(X_q2, Y_pm2, test_size=0.2, shuffle=True, random_state=1)
-from sklearn.ensemble import GradientBoostingRegressor
-gbr = GradientBoostingRegressor(random_state=0)
-gbr.fit(X_train, y_train)
-y_pred = gbr.predict(X_test)
-print(f'R2_train:{gbr.score(X_train, y_train):.2f}')
-print(f'R2:{gbr.score(X_test, y_test):.2f}')
-print(gbr.feature_importances_)
-
+# from sklearn.ensemble import GradientBoostingRegressor
+# gbr = GradientBoostingRegressor(random_state=0)
+# gbr.fit(X_train, y_train)
+# y_pred = gbr.predict(X_test)
+# print(f'R2_train:{gbr.score(X_train, y_train):.2f}')
+# print(f'R2:{gbr.score(X_test, y_test):.2f}')
+# print(gbr.feature_importances_)
+#
 print()
 rfr = RandomForestRegressor(random_state=0, n_estimators=50)
 rfr.fit(X_train, y_train)
@@ -139,8 +138,10 @@ print(f'R2_train:{rfr.score(X_train, y_train):.2f}')
 print(f'R2:{rfr.score(X_test, y_test):.2f}')
 
 
-
-
+# from sklearn.model_selection import cross_val_score
+# rfr = RandomForestRegressor(random_state=0, n_estimators=50)
+# scores = cross_val_score(rfr, X_q2, Y_pm2, cv=3, scoring='r2')            #5-fold cv
+# print(scores.mean())
 # 问题三 季节分析
 # X_COLS = ['sjz_staticstability', 'sjz_temperature',
 #           # 'sjz_high', 'sjz_ground_wind',
