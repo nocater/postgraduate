@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import metrics as mr
 import numpy as np
-
+from sklearn.ensemble import RandomForestRegressor
 
 def evaluate_regression(y, y_pred):
     from sklearn.metrics import mean_absolute_error, mean_squared_error
@@ -65,13 +65,17 @@ def generateQ():
 
         print(first.shape, second.shape, third.shape, fourth.shape)
 
-
+# generateQ()
 first = pd.read_csv(BASE_PATH+r'\sjz_q1.csv')
 first.date = pd.to_datetime(first.date)
 first = first.set_index('date')
 
+#
+print(len(first[first.sjz_wind==0]))
+
+
 first = first['2014-1-1':'2017-1-1']
-Y = first.sjz_pm2
+Y = first.sjz_no2
 X = first.loc[:, 'sjz_staticstability':]
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, shuffle=True, random_state=0)
 
