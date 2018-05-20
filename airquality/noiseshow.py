@@ -45,6 +45,36 @@ plt.legend()
 plt.show()
 
 
+# 石家庄的pm2.5
+sjz = df_q.sjz_co2.values
+sjz = sjz[:-1]
+sjz = sjz.reshape(-1, 4)
+names = ['Spring', 'Summer', 'August', 'Winter']
+x = range(len(names))
+plt.plot(x, sjz[0], '*-', label='2014')
+plt.plot(x, sjz[1], '+-', label='2015')
+plt.plot(x, sjz[2], 'x-', label='2016')
+plt.xticks(x, names)
+plt.ylabel('Pm2.5')
+plt.title('SJZ_Sum_Co2(2014-2016)')
+plt.legend()
+plt.show()
+
+# 邢台的pm2.5
+xt = df_q.xt_co2.values
+xt = xt[:-1]
+xt = xt.reshape(-1, 4)
+names = ['Spring', 'Summer', 'August', 'Winter']
+x = range(len(names))
+plt.plot(x, xt[0], '*-', label='2014')
+plt.plot(x, xt[1], '+-', label='2015')
+plt.plot(x, xt[2], 'x-', label='2016')
+plt.xticks(x, names)
+plt.ylabel('Pm2.5')
+plt.title('XT_Sum_CO2(2014-2016)')
+plt.legend()
+plt.show()
+
 # plt.figure(1)
 # for col in df.columns[:1]:
 #     y = np.array(df[[col]].values)
