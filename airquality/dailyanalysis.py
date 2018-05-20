@@ -197,7 +197,7 @@ def Q2(df):
     print(f'R2:{gbr.score(X_test, y_test):.2f}')
 
 
-def Q2_BEST(df):
+def Q2_BEST(df, col):
     # 问题三 季节分析
     X_COLS = ['sjz_staticstability', 'sjz_temperature',
               # 'sjz_high', 'sjz_ground_wind',
@@ -206,11 +206,18 @@ def Q2_BEST(df):
            'sjz_humidity', 'sjz_min_humidity',
            'sjz_wind', 'sjz_max_wind',
            'sjz_sunshine']
+    X_COLS = ['sjz_staticstability', 'sjz_temperature',
+              'sjz_high', 'sjz_ground_wind',
+              'sjz_max_temperature', 'sjz_min_temperature',
+              'sjz_water', 'sjz_pressure',
+              'sjz_humidity', 'sjz_min_humidity',
+              'sjz_wind', 'sjz_max_wind',
+              'sjz_sunshine']
 
     # 取2014 - 2016 数据
     df = df['2014-1-1':'2017-1-1']
     df = df.filter(regex='date|sjz_*')
-    Y = df.sjz_pm2
+    Y = df[[col]].values.ravel()
     X = df[X_COLS]
     # X.to_csv(BASE_PATH+'\X.csv')
 
@@ -225,7 +232,9 @@ def Q2_BEST(df):
     gbr.fit(X_train, y_train)
     y_pred = gbr.predict(X_test)
     print(f'R2:{gbr.score(X_test, y_test):.2f}')
-    # print(gbr.feature_importances_)
+    print(X_COLS)
+    print(gbr.feature_importances_)
+    return gbr.feature_importances_
 
 
 def searchQ2(df):
@@ -272,7 +281,6 @@ def searchQ2(df):
     y_predic = rfc1.predict(X_test)
     evaluate_regression(y_predic, y_test)
     print(f'R2:{rfc1.score(X_test, y_test):.2}')
-
 
 
 def Q3():
@@ -333,6 +341,33 @@ def Q3():
     result.to_csv(BASE_PATH+r'\result\Question3_Q1.csv')
 
 
+def Q1_IG(df, col):
+    # 问题1 IG
+    X_COLS = ['sjz_staticstability', 'sjz_temperature',
+              'sjz_high', 'sjz_ground_wind',
+              'sjz_max_temperature', 'sjz_min_temperature',
+              'sjz_water', 'sjz_pressure',
+              'sjz_humidity', 'sjz_min_humidity',
+              'sjz_wind', 'sjz_max_wind',
+              'sjz_sunshine']
+
+    # 取2014 - 2016 数据
+    df = df['2014-1-1':'2017-1-1']
+    df = df.filter(regex='date|sjz_*')
+    Y = df[[col]].values.ravel()
+    X = df[X_COLS]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, shuffle=True, random_state=1)
+    from sklearn.ensemble import GradientBoostingRegressor
+    gbr = GradientBoostingRegressor(random_state=10)
+    gbr.fit(X_train, y_train)
+    y_pred = gbr.predict(X_test)
+    print(f'R2:{gbr.score(X_test, y_test):.2f}')
+    print(X_COLS)
+    print(gbr.feature_importances_)
+    return gbr.feature_importances_
+
+
 if __name__ == '__main__':
     BASE_PATH = r'C:\Users\chenshuai\Documents\airquality\\'
     df = pd.read_csv(BASE_PATH+r'chen2014-2017.csv')
@@ -343,8 +378,16 @@ if __name__ == '__main__':
     # Q3(df)
     # Q2_BEST(df)
     # searchQ2(df)
-    Q3()
+    # Q3()
 
+    sjz = []
+    Ys = ['sjz_pm2',  'sjz_pm10', 'sjz_so2', 'sjz_co2', 'sjz_o3']
+    for y in Ys:
+        sjz.append(Q2_BEST(df, y))
+    sjz = np.reshape(sjz, (-1, 13))
+    cols = ['sjz_staticstability', 'sjz_temperature', 'sjz_high', 'sjz_ground_wind', 'sjz_max_temperature', 'sjz_min_temperature', 'sjz_water', 'sjz_pressure', 'sjz_humidity', 'sjz_min_humidity', 'sjz_wind', 'sjz_max_wind', 'sjz_sunshine']
+    shz_ig = pd.DataFrame(sjz, columns=cols, index=Ys)
+    shz_ig.to_csv(BASE_PATH+r'\result\xt_IG.csv')
     # from sklearn.model_selection import cross_val_score
     # rfr = RandomForestRegressor(random_state=0, n_estimators=50)
     # scores = cross_val_score(rfr, X_q2, Y_pm2, cv=3, scoring='r2')            #5-fold cv
