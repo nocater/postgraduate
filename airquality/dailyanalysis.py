@@ -49,6 +49,20 @@ def compute_temperature(l):
     pass
 
 
+def evaluate_regression(y, y_pred):
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+    y = y.ravel()
+    y_pred = y_pred.ravel()
+    print(f'MAE:{int(mean_absolute_error(y, y_pred))}')
+    print(f'MSE:{int(mean_squared_error(y, y_pred))}')
+    print(f'RMSE:{int(np.sqrt(mean_squared_error(y, y_pred)))}')
+    # print('抽样随机结果对比：')
+    # index = np.random.randint(1, 20)
+    # result = pd.DataFrame([y[index:index+5], y_pred[index:index+5]], index=['y', 'y_pred'])
+    # print(result)
+    pass
+
+
 X_SJZ = ['sjz_staticstability', 'sjz_temperature',
           'sjz_high', 'sjz_ground_wind',
        'sjz_max_temperature', 'sjz_min_temperature',
@@ -66,9 +80,9 @@ X_XT = ['xt_staticstability', 'xt_temperature',
 # 取石家庄逐日数据
 df_q2 = df.filter(regex='sjz_*')
 df_q2 = df_q2['2014-1-1':'2017-1-1']
-df_q2.drop(columns=['sjz_water'])
+# df_q2.drop(columns=['sjz_water'])
 
-Y_pm2 = df_q2.sjz_co2.values                   # Y 为当日浓度
+Y_pm2 = df_q2.sjz_pm2.values                   # Y 为当日浓度
 Y_pm2 = Y_pm2[1:]
 # Y_pm2 = compute(df_q2.sjz_co2.values) # Y 为逐日差值类型
 # 风速增加
@@ -89,8 +103,8 @@ df_q2_add = pd.DataFrame({
 df_q2 = df_q2.iloc[1:, :]
 df_q2 = df_q2[X_SJZ]
 df_q2_add.index = df_q2.index
-# X_q2 = pd.concat([df_q2, df_q2_add], axis=1)  # 加三维度
-X_q2 = df_q2                                    # 不加三个维度
+X_q2 = pd.concat([df_q2, df_q2_add], axis=1)  # 加三维度
+# X_q2 = df_q2                                    # 不加三个维度
 # X_q2 = df_q2_add                              # 只是用add三个维度
 # X_q2.info()
 
@@ -121,7 +135,7 @@ if False:
     # Y_pm2 = np.append(Y_pm2, Y_pm2_xt)
     # Y_pm2 = Y_pm2.ravel()
 
-X_train, X_test, y_train, y_test = train_test_split(X_q2, Y_pm2, test_size=0.2, shuffle=True, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X_q2, Y_pm2, test_size=0.3, shuffle=True, random_state=1)
 # from sklearn.ensemble import GradientBoostingRegressor
 # gbr = GradientBoostingRegressor(random_state=0)
 # gbr.fit(X_train, y_train)
@@ -136,9 +150,16 @@ rfr.fit(X_train, y_train)
 y_pred = rfr.predict(X_test)
 print(f'R2_train:{rfr.score(X_train, y_train):.2f}')
 print(f'R2:{rfr.score(X_test, y_test):.2f}')
-print(X_q2.columns)
-print(rfr.feature_importances_)
+evaluate_regression(y_pred, y_test)
+# print(X_q2.columns)
+# print(rfr.feature_importances_)
 
+
+import matplotlib.pyplot as plt
+y = sorted(Y_pm2)
+x = range(len(y))
+plt.plot(x,y)
+plt.show()
 
 # from sklearn.model_selection import cross_val_score
 # rfr = RandomForestRegressor(random_state=0, n_estimators=50)
