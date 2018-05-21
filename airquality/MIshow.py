@@ -17,6 +17,7 @@ COLS = ['y','ground_wind', 'high', 'humidity', 'max_temperature',
                                  'temperature', 'water', 'wind']
 
 pd_sjz = []
+pd_xt = []
 for f in files:
     path = BATH_PATH+'\\'+f
     df = pd.read_csv(path)
