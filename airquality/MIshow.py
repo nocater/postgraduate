@@ -24,26 +24,58 @@ for f in files:
     df = df.drop(columns=['Unnamed: 0'])
     df.columns = COLS
     df = df.set_index('y')
-    # df.info()
     if 'sjz' in f:
         pd_sjz.append(df)
-        pass
+    if 'xt' in f:
+        pd_xt.append(df)
 
+x = range(1, 14)
+i = 1
 
-pm2 = [i.loc['pm2', :] for i in pd_sjz]
-pm2 = np.array(pm2)
-# pm2.reshape(-1, 13)
-# # 获取到了一个城市的四个季度的pm2值
-# pm2 = np.mean(pm2, axis=0)
-# print(np.shape(pm2))
+# 石家庄
+for index, title in zip(
+                    ['pm2', 'pm10', 'so2', 'no2', 'co2', 'o3'],
+                    ['PM2.5', 'PM10', 'So2', 'No2', 'CO', 'O3']
+                    ):
+    plt.figure(i)
+    i += 1
+    qs = [df.loc[index] for df in pd_xt]
+    # 画四条线
+    plt.plot(x, qs[0], 'o--', label='sjzSpring')
+    plt.plot(x, qs[1], 'v-', label='sjzSummer')
+    plt.plot(x, qs[2], '*-.', label='sjzAutumn')
+    plt.plot(x, qs[3], 'x:',  label='sjzWinter')
+    # X 轴坐标
+    plt.xlabel('the ith attributes of all factors')
+    # Y 轴坐标
+    plt.ylabel('The coefficient of Information Gain')
+    # 标题
+    plt.title(title)
+    # 显示图例
+    plt.legend()
+    # 显示图片
+    plt.show()
 
-plt.plot([i for i in range(13)], pm2[0], 'r--', label='Q1')
-plt.plot([i for i in range(13)], pm2[1], 'g--', label='Q2')
-plt.plot([i for i in range(13)], pm2[2], 'b--', label='Q3')
-plt.plot([i for i in range(13)], pm2[3], 'p--', label='Q4')
-plt.title('SJZ_PM2.5_MU')
-plt.legend()
-plt.xticks(np.arange(0, 13), tuple(COLS)[1:], rotation=60)
-plt.xlabel('Attribute')
-plt.ylabel('MU')
-plt.show()
+# 邢台
+for index, title in zip(
+                    ['pm2', 'pm10', 'so2', 'no2', 'co2', 'o3'],
+                    ['PM2.5', 'PM10', 'So2', 'No2', 'CO', 'O3']
+                    ):
+    plt.figure(i)
+    i += 1
+    qs = [df.loc[index] for df in pd_xt]
+    # 画四条线
+    plt.plot(x, qs[0], 'o--', label='xtSpring')
+    plt.plot(x, qs[1], 'v-', label='xtSummer')
+    plt.plot(x, qs[2], '*-.', label='xtAutumn')
+    plt.plot(x, qs[3], 'x:',  label='xtWinter')
+    # X 轴坐标
+    plt.xlabel('the ith attributes of all factors')
+    # Y 轴坐标
+    plt.ylabel('The coefficient of Information Gain')
+    # 标题
+    plt.title(title)
+    # 显示图例
+    plt.legend()
+    # 显示图片
+    plt.show()
