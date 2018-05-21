@@ -49,7 +49,7 @@ plt.show()
 sjz = df_q.sjz_co2.values
 sjz = sjz[:-1]
 sjz = sjz.reshape(-1, 4)
-names = ['Spring', 'Summer', 'August', 'Winter']
+names = ['Spring', 'Summer', 'Autumn', 'Winter']
 x = range(len(names))
 plt.plot(x, sjz[0], '*-', label='2014')
 plt.plot(x, sjz[1], '+-', label='2015')
@@ -64,7 +64,7 @@ plt.show()
 xt = df_q.xt_co2.values
 xt = xt[:-1]
 xt = xt.reshape(-1, 4)
-names = ['Spring', 'Summer', 'August', 'Winter']
+names = ['Spring', 'Summer', 'Autumn', 'Winter']
 x = range(len(names))
 plt.plot(x, xt[0], '*-', label='2014')
 plt.plot(x, xt[1], '+-', label='2015')
