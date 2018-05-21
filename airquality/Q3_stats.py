@@ -11,11 +11,12 @@ df = df.set_index('date')
 # Y_sjz = df[['']]
 # 按月统计
 # 按季度
-df_q = df.resample('Q').mean()
-print(df_q.head())
+df_q_mean = df.resample('Q').mean()
+df_q_sum = df.resample('Q').sum()
+print(df_q_mean.head())
 
 # 石家庄的pm2.5
-sjz = df_q.sjz_pm2.values
+sjz = df_q_mean.sjz_pm2.values
 sjz = sjz[:-1]
 sjz = sjz.reshape(-1, 4)
 names = ['Spring', 'Summer', 'August', 'Winter']
@@ -25,12 +26,12 @@ plt.plot(x, sjz[1], '+-', label='2015')
 plt.plot(x, sjz[2], 'x-', label='2016')
 plt.xticks(x, names)
 plt.ylabel('Pm2.5')
-plt.title('SJZ_Mean_Pm2.5(2014-2016)')
+plt.title('SJZ_Mean_PM2.5(2014-2016)')
 plt.legend()
 plt.show()
 
 # 邢台的pm2.5
-xt = df_q.xt_pm2.values
+xt = df_q_mean.xt_pm2.values
 xt = xt[:-1]
 xt = xt.reshape(-1, 4)
 names = ['Spring', 'Summer', 'August', 'Winter']
@@ -40,13 +41,14 @@ plt.plot(x, xt[1], '+-', label='2015')
 plt.plot(x, xt[2], 'x-', label='2016')
 plt.xticks(x, names)
 plt.ylabel('Pm2.5')
-plt.title('XT_Mean_Pm2.5(2014-2016)')
+plt.title('XT_Mean_PM2.5(2014-2016)')
 plt.legend()
 plt.show()
 
 
+df_q_sum = df.resample('Q').sum()
 # 石家庄的pm2.5
-sjz = df_q.sjz_co2.values
+sjz = df_q_mean.sjz_co2.values
 sjz = sjz[:-1]
 sjz = sjz.reshape(-1, 4)
 names = ['Spring', 'Summer', 'Autumn', 'Winter']
@@ -56,12 +58,12 @@ plt.plot(x, sjz[1], '+-', label='2015')
 plt.plot(x, sjz[2], 'x-', label='2016')
 plt.xticks(x, names)
 plt.ylabel('Pm2.5')
-plt.title('SJZ_Sum_Co2(2014-2016)')
+plt.title('SJZ_Mean_CO(2014-2016)')
 plt.legend()
 plt.show()
 
 # 邢台的pm2.5
-xt = df_q.xt_co2.values
+xt = df_q_mean.xt_co2.values
 xt = xt[:-1]
 xt = xt.reshape(-1, 4)
 names = ['Spring', 'Summer', 'Autumn', 'Winter']
@@ -71,9 +73,10 @@ plt.plot(x, xt[1], '+-', label='2015')
 plt.plot(x, xt[2], 'x-', label='2016')
 plt.xticks(x, names)
 plt.ylabel('Pm2.5')
-plt.title('XT_Sum_CO2(2014-2016)')
+plt.title('XT_Mean_CO(2014-2016)')
 plt.legend()
 plt.show()
+
 
 # plt.figure(1)
 # for col in df.columns[:1]:
