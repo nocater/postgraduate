@@ -39,17 +39,17 @@ i = 1
 # 石家庄
 # for index, title in zip(
 #                     ['sjz_pm2', 'sjz_pm10', 'sjz_so2', 'sjz_no2', 'sjz_co2', 'sjz_o3'],
-#                     ['sjz_pm2', 'sjz_pm10', 'sjz_so2', 'sjz_no2', 'sjz_co', 'sjz_o3']
+#                     ['PM2.5', 'PM10', 'So2', 'No2', 'CO', 'O3']
 #                     ):
 #     plt.figure(i)
 #     i += 1
 #     qs = [df.loc[index] for df in sjz]
-#     plt.plot(x, qs[0], label='Q1')
-#     plt.plot(x, qs[1], label='Q2')
-#     plt.plot(x, qs[2], label='Q3')
-#     plt.plot(x, qs[3], label='Q4')
-#     plt.xlabel('Attributes')
-#     plt.ylabel(index.split('_')[1])
+#     plt.plot(x, qs[0], label='sjzSpring')
+#     plt.plot(x, qs[1], label='sjzSummer')
+#     plt.plot(x, qs[2], label='sjzAutumn')
+#     plt.plot(x, qs[3], label='sjz_Winter')
+#     plt.xlabel('the ith attributes of all factors')
+#     plt.ylabel('The coefficient of Information Gain')
 #     plt.title(title)
 #     plt.legend()
 #     plt.show()
@@ -57,17 +57,23 @@ i = 1
 # 邢台
 for index, title in zip(
                     ['xt_pm2', 'xt_pm10', 'xt_so2', 'xt_no2', 'xt_co2', 'xt_o3'],
-                    ['xt_pm2', 'xt_pm10', 'xt_so2', 'xt_no2', 'xt_co', 'xt_o3']
+                    ['PM2.5', 'PM10', 'So2', 'No2', 'CO', 'O3']
                     ):
     plt.figure(i)
     i += 1
     qs = [df.loc[index] for df in xt]
-    plt.plot(x, qs[0], label='Q1')
-    plt.plot(x, qs[1], label='Q2')
-    plt.plot(x, qs[2], label='Q3')
-    plt.plot(x, qs[3], label='Q4')
-    plt.xlabel('Attributes')
-    plt.ylabel(index.split('_')[1])
+    # 画四条线
+    plt.plot(x, qs[0], 'o--', label='xtSpring')
+    plt.plot(x, qs[1], 'v-', label='xtSummer')
+    plt.plot(x, qs[2], '*-.', label='xtAutumn')
+    plt.plot(x, qs[3], 'x:',  label='xtWinter')
+    # X 轴坐标
+    plt.xlabel('the ith attributes of all factors')
+    # Y 轴坐标
+    plt.ylabel('The coefficient of Information Gain')
+    # 标题
     plt.title(title)
+    # 显示图例
     plt.legend()
+    # 显示图片
     plt.show()
