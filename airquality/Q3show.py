@@ -138,10 +138,10 @@ def plotQ3(data, title, paprams, seed):
     # y_pred = y_pred[indices]
     # 画图
     x = range(1, X_test.shape[0]+1)
-    plt.plot(x, y_pred, label='prediction')
-    plt.plot(x, y_test, label='real')
+    plt.plot(x, y_pred, '-', label='prediction')
+    plt.plot(x, y_test, '-.', label='real')
     plt.xlabel('test')
-    plt.ylabel('pm2.5')
+    plt.ylabel('PM2.5')
     plt.title(title)
     plt.legend()
     plt.show()
