@@ -6,6 +6,19 @@ from sklearn.model_selection import train_test_split
 
 
 class feature_energing:
+    """
+        数据处理
+        使用：
+            fe = feature_energing=(file, params)
+            fe.preprocess()
+        属性
+        origin_df:原始CSV数据
+        target_df:处理后数据(需要执行preprocess)
+        origin_range:原始数据范围
+        target_range：处理后数据范围
+        X:自变量df
+        Y:因变量df
+    """
     def __init__(self, file,
                     columns:'选取的数据维度' = ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', '等温温度T2', '回火温度T3', '抗拉强度'],
                     scaler:'是否采用数据缩放' = StandardScaler,

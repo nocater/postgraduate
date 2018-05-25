@@ -1,5 +1,5 @@
 import numpy as np
-from material.origindata import feature_energing
+from material.datahelper import feature_energing
 import pandas as pd
 from sklearn.model_selection import cross_val_predict, cross_val_score
 import random

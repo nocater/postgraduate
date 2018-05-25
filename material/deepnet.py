@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from material.origindata import feature_energing
+from material.datahelper import feature_energing
 
 
 INPUT_NODES = 0
