@@ -164,7 +164,7 @@ def deal_labels(y, categories, onehot=False):
 
 
 if __name__=='__main__':
-    from material.origindata import feature_energing
+    from material.datahelper import feature_energing
 
     path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
     fe = feature_energing(path, onehot=True, categories=2, info=False)
