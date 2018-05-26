@@ -22,6 +22,72 @@ def evaluate_regression(y, y_pred):
 
 BASE_PATH = r'C:\Users\chenshuai\Documents\airquality'
 
+
+def Q1_IG(df, col):
+    # 问题1 IG
+    X_COLS = ['sjz_staticstability', 'sjz_temperature',
+              'sjz_high', 'sjz_ground_wind',
+              'sjz_max_temperature', 'sjz_min_temperature',
+              'sjz_water', 'sjz_pressure',
+              'sjz_humidity', 'sjz_min_humidity',
+              'sjz_wind', 'sjz_max_wind',
+              'sjz_sunshine']
+    COLUMNS_SJZ = ['sjz_ground_wind', 'sjz_high', 'sjz_humidity', 'sjz_max_temperature',
+                   'sjz_max_wind', 'sjz_min_humidity',
+                   'sjz_min_temperature', 'sjz_pressure', 'sjz_staticstability', 'sjz_sunshine',
+                   'sjz_temperature', 'sjz_water', 'sjz_wind']
+    # 取2014 - 2016 数据
+    df.date = pd.to_datetime(df.date)
+    df = df.set_index('date')
+    df = df['2014-1-1':'2017-1-1']
+    df = df.filter(regex='date|sjz_*')
+    Y = df[[col]].values.ravel()
+    X = df[COLUMNS_SJZ]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, shuffle=True, random_state=1)
+    from sklearn.ensemble import GradientBoostingRegressor
+    gbr = GradientBoostingRegressor(random_state=10)
+    gbr.fit(X_train, y_train)
+    y_pred = gbr.predict(X_test)
+    print(f'R2:{gbr.score(X_test, y_test):.2f}')
+    print(X_COLS)
+    print(gbr.feature_importances_)
+    return gbr.feature_importances_
+
+
+def Q1_IG_XT(df, col):
+    # 问题1 IG
+    X_COLS = ['xt_staticstability', 'xt_temperature',
+              'xt_high', 'xt_ground_wind',
+              'xt_max_temperature', 'xt_min_temperature',
+              'xt_water', 'xt_pressure',
+              'xt_humidity', 'xt_min_humidity',
+              'xt_wind', 'xt_max_wind',
+              'xt_sunshine']
+
+    COLUMNS_XT = ['xt_ground_wind', 'xt_high', 'xt_humidity', 'xt_max_temperature',
+                  'xt_max_wind', 'xt_min_humidity',
+                  'xt_min_temperature', 'xt_pressure', 'xt_staticstability', 'xt_sunshine',
+                  'xt_temperature', 'xt_water', 'xt_wind']
+    # 取2014 - 2016 数据
+    df.date = pd.to_datetime(df.date)
+    df = df.set_index('date')
+    df = df['2014-1-1':'2017-1-1']
+    df = df.filter(regex='date|xt_*')
+    Y = df[[col]].values.ravel()
+    X = df[COLUMNS_XT]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, shuffle=True, random_state=1)
+    from sklearn.ensemble import GradientBoostingRegressor
+    gbr = GradientBoostingRegressor(random_state=10)
+    gbr.fit(X_train, y_train)
+    y_pred = gbr.predict(X_test)
+    print(f'R2:{gbr.score(X_test, y_test):.2f}')
+    print(X_COLS)
+    print(gbr.feature_importances_)
+    return gbr.feature_importances_
+
+
 def generateQ():
     """
     生成季度数据表格
@@ -110,3 +176,48 @@ xgb.fit(X_train, y_train)
 y_pred = xgb.predict(X_test)
 evaluate_regression(y_test, y_pred)
 print(f'R2:{xgb.score(X_test, y_test):.2f}')
+
+
+
+# IG
+COLUMNS_SJZ = ['sjz_ground_wind', 'sjz_high', 'sjz_humidity', 'sjz_max_temperature',
+              'sjz_max_wind', 'sjz_min_humidity',
+            'sjz_min_temperature', 'sjz_pressure', 'sjz_staticstability', 'sjz_sunshine',
+            'sjz_temperature', 'sjz_water', 'sjz_wind']
+COLUMNS_XT = ['xt_ground_wind', 'xt_high', 'xt_humidity', 'xt_max_temperature',
+              'xt_max_wind', 'xt_min_humidity',
+            'xt_min_temperature', 'xt_pressure', 'xt_staticstability', 'xt_sunshine',
+            'xt_temperature', 'xt_water', 'xt_wind']
+# 计算石家庄的IG
+sjz_files = ['sjz_q4.csv', 'sjz_q3.csv', 'sjz_q2.csv', 'sjz_q1.csv']
+for f in sjz_files:
+    df = pd.read_csv(BASE_PATH+'\\'+f)
+    Ys = ['sjz_co2', 'sjz_no2', 'sjz_o3', 'sjz_pm2', 'sjz_pm10', 'sjz_so2']
+    # Ys = ['sjz_pm2', 'sjz_pm10', 'sjz_so2', 'sjz_no2', 'sjz_co2', 'sjz_o3']
+    sjz = []
+    for y in Ys:
+        sjz.append(Q1_IG(df, y))
+    sjz = np.reshape(sjz, (-1, 13))
+    # cols = ['sjz_staticstability', 'sjz_temperature', 'sjz_high', 'sjz_ground_wind', 'sjz_max_temperature',
+    #         'sjz_min_temperature', 'sjz_water', 'sjz_pressure', 'sjz_humidity', 'sjz_min_humidity', 'sjz_wind',
+    #         'sjz_max_wind', 'sjz_sunshine']
+    shz_ig = pd.DataFrame(sjz, columns=COLUMNS_SJZ, index=Ys)
+    shz_ig.to_csv(BASE_PATH + r'\result\\'+f.split('.')[0]+'_IG.csv')
+
+
+
+# 计算邢台的IG
+xt_files = ['xt_q4.csv', 'xt_q3.csv', 'xt_q2.csv', 'xt_q1.csv']
+for f in xt_files:
+    df = pd.read_csv(BASE_PATH+'\\'+f)
+    Ys = ['xt_co2', 'xt_no2', 'xt_o3', 'xt_pm2', 'xt_pm10', 'xt_so2']
+    # Ys = ['xt_pm2', 'xt_pm10', 'xt_so2', 'xt_no2', 'xt_co2', 'xt_o3']
+    sjz = []
+    for y in Ys:
+        sjz.append(Q1_IG_XT(df, y))
+    sjz = np.reshape(sjz, (-1, 13))
+    # cols = ['xt_staticstability', 'xt_temperature', 'xt_high', 'xt_ground_wind', 'xt_max_temperature',
+    #         'xt_min_temperature', 'xt_water', 'xt_pressure', 'xt_humidity', 'xt_min_humidity', 'xt_wind',
+    #         'xt_max_wind', 'xt_sunshine']
+    shz_ig = pd.DataFrame(sjz, columns=COLUMNS_XT, index=Ys)
+    shz_ig.to_csv(BASE_PATH + r'\result\\'+f.split('.')[0]+'_IG.csv')

@@ -17,6 +17,10 @@ COLUMNS_XT = ['xt_ground_wind', 'xt_high', 'xt_humidity', 'xt_max_temperature',
               'xt_max_wind', 'xt_min_humidity',
             'xt_min_temperature', 'xt_pressure', 'xt_staticstability', 'xt_sunshine',
             'xt_temperature', 'xt_water', 'xt_wind']
+
+index_sjz = ['sjz_co2', 'sjz_no2', 'sjz_o3', 'sjz_pm2', 'sjz_pm10', 'sjz_so2']
+index_xt = ['sjz_co2', 'sjz_no2', 'sjz_o3', 'sjz_pm2', 'sjz_pm10', 'sjz_so2']
+
 sjz = []
 xt = []
 for file in files:
@@ -55,25 +59,25 @@ i = 1
 #     plt.show()
 
 # 邢台
-for index, title in zip(
-                    ['xt_pm2', 'xt_pm10', 'xt_so2', 'xt_no2', 'xt_co2', 'xt_o3'],
-                    ['PM2.5', 'PM10', 'So2', 'No2', 'CO', 'O3']
-                    ):
-    plt.figure(i)
-    i += 1
-    qs = [df.loc[index] for df in xt]
-    # 画四条线
-    plt.plot(x, qs[0], 'o--', label='xtSpring')
-    plt.plot(x, qs[1], 'v-', label='xtSummer')
-    plt.plot(x, qs[2], '*-.', label='xtAutumn')
-    plt.plot(x, qs[3], 'x:',  label='xtWinter')
-    # X 轴坐标
-    plt.xlabel('the ith attributes of all factors')
-    # Y 轴坐标
-    plt.ylabel('The coefficient of Information Gain')
-    # 标题
-    plt.title(title)
-    # 显示图例
-    plt.legend()
-    # 显示图片
-    plt.show()
+# for index, title in zip(
+#                     ['xt_pm2', 'xt_pm10', 'xt_so2', 'xt_no2', 'xt_co2', 'xt_o3'],
+#                     ['PM2.5', 'PM10', 'So2', 'No2', 'CO', 'O3']
+#                     ):
+#     plt.figure(i)
+#     i += 1
+#     qs = [df.loc[index] for df in xt]
+#     # 画四条线
+#     plt.plot(x, qs[0], 'o--', label='xtSpring')
+#     plt.plot(x, qs[1], 'v-', label='xtSummer')
+#     plt.plot(x, qs[2], '*-.', label='xtAutumn')
+#     plt.plot(x, qs[3], 'x:',  label='xtWinter')
+#     # X 轴坐标
+#     plt.xlabel('the ith attributes of all factors')
+#     # Y 轴坐标
+#     plt.ylabel('The coefficient of Information Gain')
+#     # 标题
+#     plt.title(title)
+#     # 显示图例
+#     plt.legend()
+#     # 显示图片
+#     plt.show()

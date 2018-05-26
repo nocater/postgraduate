@@ -197,7 +197,7 @@ def Q2(df):
     print(f'R2:{gbr.score(X_test, y_test):.2f}')
 
 
-def Q2_BEST(df, col):
+def Q2_BEST(df):
     # 问题三 季节分析
     X_COLS = ['sjz_staticstability', 'sjz_temperature',
               # 'sjz_high', 'sjz_ground_wind',
@@ -217,14 +217,15 @@ def Q2_BEST(df, col):
     # 取2014 - 2016 数据
     df = df['2014-1-1':'2017-1-1']
     df = df.filter(regex='date|sjz_*')
-    Y = df[[col]].values.ravel()
+    Y = df.sjz_pm2.values.ravel()
     X = df[X_COLS]
     # X.to_csv(BASE_PATH+'\X.csv')
 
-    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, shuffle=True, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.1, shuffle=True, random_state=1)
     rfr = RandomForestRegressor(random_state=0, n_estimators=50)
     rfr.fit(X_train, y_train)
     y_pred = rfr.predict(X_test)
+    print(rfr.get_params())
     print(f'RF:;R2_train:{rfr.score(X_train, y_train):.2f}')
     print(f'R2:{rfr.score(X_test, y_test):.2f}')
     from sklearn.ensemble import GradientBoostingRegressor
@@ -305,8 +306,8 @@ def Q3():
               'sjz_sunshine',
               'wind_add', 'temperate_add', 'humidity_add'
               ]
-    df1 = pd.read_csv(BASE_PATH + r'\sjz_q1.csv')
-    df1_2 = pd.read_csv(BASE_PATH + r'\xt_q1.csv')
+    df1 = pd.read_csv(BASE_PATH + r'\sjz_q2.csv')
+    df1_2 = pd.read_csv(BASE_PATH + r'\xt_q2.csv')
     df1 = df1.set_index('date')
     df1_2 = df1_2.set_index('date')
 
@@ -326,8 +327,8 @@ def Q3():
     Y = df1.sjz_pm2
     X = df1[X_COLS]
 
-    print(X.shape)
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, shuffle=True, random_state=0)
+    print(X.shape)
     CV_rfc.fit(X_train, y_train)
     print(CV_rfc.best_params_)
     print(f'Score:{CV_rfc.best_score_}')
@@ -338,7 +339,7 @@ def Q3():
     evaluate_regression(y_predict, y_test)
     print(f'R2:{rfc1.score(X_test, y_test):.2}')
     result = pd.DataFrame({'real': y_test, 'y_predict': y_predict})
-    result.to_csv(BASE_PATH+r'\result\Question3_Q1.csv')
+    # result.to_csv(BASE_PATH+r'\result\Question3_Q1.csv')
 
 
 def Q1_IG(df, col):
@@ -376,18 +377,10 @@ if __name__ == '__main__':
 
     # Q2(df)
     # Q3(df)
-    # Q2_BEST(df)
+    Q2_BEST(df)
     # searchQ2(df)
     # Q3()
 
-    sjz = []
-    Ys = ['sjz_pm2',  'sjz_pm10', 'sjz_so2', 'sjz_co2', 'sjz_o3']
-    for y in Ys:
-        sjz.append(Q2_BEST(df, y))
-    sjz = np.reshape(sjz, (-1, 13))
-    cols = ['sjz_staticstability', 'sjz_temperature', 'sjz_high', 'sjz_ground_wind', 'sjz_max_temperature', 'sjz_min_temperature', 'sjz_water', 'sjz_pressure', 'sjz_humidity', 'sjz_min_humidity', 'sjz_wind', 'sjz_max_wind', 'sjz_sunshine']
-    shz_ig = pd.DataFrame(sjz, columns=cols, index=Ys)
-    shz_ig.to_csv(BASE_PATH+r'\result\xt_IG.csv')
     # from sklearn.model_selection import cross_val_score
     # rfr = RandomForestRegressor(random_state=0, n_estimators=50)
     # scores = cross_val_score(rfr, X_q2, Y_pm2, cv=3, scoring='r2')            #5-fold cv
