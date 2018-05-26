@@ -2,14 +2,27 @@ from material.datahelper import feature_energing
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor
+from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
+import numpy as np
 
 if __name__ == '__main__':
+    """
+    概率模型 数据缩放与否没有影响 依赖于数据的分布
+    """
     path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
     # 查看第三次仅仅增加数据的信息
-    fe = feature_energing(file=path, regression=True)
+    fe = feature_energing(file=path, regression=True, info=False)
     fe.preprocess()
     df = fe.target_df
+    X = fe.X
+    Y = df.Y
+
+    # 数据缩放
+    scaler = MinMaxScaler()
+    X = scaler.fit_transform(X)
+
+    print(np.max(X, axis=0))
 
     dtr = DecisionTreeRegressor()
     rfr = RandomForestRegressor(random_state=0, n_jobs=-1)
@@ -25,7 +38,7 @@ if __name__ == '__main__':
     # dtr = DecisionTreeRegressor(**gs.best_params_)
     # dtr.fit(fe.X, fe.Y)
     rfr = RandomForestRegressor(random_state=0, **{'max_depth': 13, 'max_features': 'sqrt', 'n_estimators': 200})
-    rfr.fit(fe.X, fe.Y)
+    rfr.fit(X, Y)
     print(fe.columns)
     print(rfr.feature_importances_)
 
