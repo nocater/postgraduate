@@ -43,21 +43,18 @@ if __name__ == '__main__':
     # dtr.fit(fe.X, fe.Y)
     rfr = RandomForestRegressor(random_state=0, **{'max_depth': 13, 'max_features': 'sqrt', 'n_estimators': 200})
     rfr.fit(X, Y)
-    print(fe.columns)
-    print(rfr.feature_importances_)
 
     # IE
-    r = pd.DataFrame({'COL':['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', 'T2', 'T3'],
-                      'IG':[0.28326462, 0.10479349, 0.07890757, 0.0313342, 0.11564087,
-                            0.0483494, 0.03508706, 0.0043995, 0.27546628, 0.02275701],
+    r = pd.DataFrame({'Element': ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', 'T2', 'T3'],
+                      'IG': rfr.feature_importances_,
                       'PEARSON': [pearsonr(X[col], Y)[0] for col in X.columns],
-                      '第一次pearson':[0.16073617667501566, 0.35782645935916213, -0.08852243529386863, -0.0601456703687851,
+                      'first_pearson':[0.16073617667501566, 0.35782645935916213, -0.08852243529386863, -0.0601456703687851,
                                         0.38983403824909374, 0.056369689455119845, 0.16734508341279708, np.nan,-0.730404789856856,
                                     -0.018895141259420416]
                       })
     r = r.sort_values('IG')
     print(r)
-    r.to_csv(r'C:\Users\chenshuai\Documents\材料学院\docs\IG_pearson.csv', index=False)
+    # r.to_csv(r'C:\Users\chenshuai\Documents\材料学院\docs\IG_pearson.csv', index=False)
     # print(pearsonr(fe.target_df, Y))
     # ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', 'T2', 'T3', '抗拉强度']
     # [0.28326462 0.10479349 0.07890757 0.0313342  0.11564087 0.0483494
