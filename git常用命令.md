@@ -28,7 +28,7 @@ git add -f 强制提交
 git add -i 交互提交  
 
 ## git checkout
-git checkout 汇总显示*工作区*、*暂存区*与HEAD的差异[显示与origin/master一致与否]  
+git checkout 汇总显示*工作区*、*暂存区* 与HEAD的差异[显示与origin/master一致与否]  
 git checkout [<brach\>] 切换分支  
 **git checout <file> 目标是工作区的文件**  
 git checkout [-q] [<commit>] [--] <paths>...  使用<commit\>版本覆盖工作区 如果省略<commit\>则指定*暂存区*进行覆盖  
@@ -45,8 +45,18 @@ git reset HEAD --soft 仅重置引用，不重置*暂存区*和*工作区*
 git reset [-mixed] HEAD^ 回退一次引用，并使用其覆盖*暂存区*
 
 ## git commit
-git commit -amend
+git commit -a **不推荐使用** 将追踪文件直接提交  
+git commit --amend 修补命令  
+git commit -c 修改重用提交信息 -C直接使用不修改  
+git commit -F
+
 ## git stash
+git stash list 显示所有  
+git stash save *message* 保存    
+git stash pop pop Stash  
+git stash apply 恢复不删除  
+git stash drop 删除  
+git stash clear 清空Stash
 
 ## git tag
 
@@ -56,6 +66,8 @@ git commit -amend
 
 ## Tips
 git rm --cache <filename\> 取消文件追踪  
+git reflog show master | head -5 显示  
+HEAD^ master@{n} 引用表示
 
 ### Markdown 的使用
 \# 一级标题  \#\#二级标题  
