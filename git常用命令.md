@@ -37,9 +37,14 @@ git checkout branch – filename 将branch所指向的提交中的filename替换
 git checkout . 重置*工作区*，使用*工作区*进行覆盖  
 
 ## git reset
-git reset HEAD <paths>
-## git commit
+<paths\> 有：重置指定路径文件 无：重置引用  
+git reset [HEAD] 重置*暂存区*  
+git reset HEAD --hard 使用*版本库*重置*暂存区*和*工作区*  
+git reset HEAD --soft 仅重置引用，不重置*暂存区*和*工作区*
+git reset [-mixed] HEAD^ 回退一次引用，并使用其覆盖*暂存区*
 
+## git commit
+git commit -amend
 ## git stash
 
 ## git tag
