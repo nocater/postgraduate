@@ -48,7 +48,7 @@ git reset [-mixed] HEAD^ 回退一次引用，并使用其覆盖*暂存区*
 git commit -a **不推荐使用** 将追踪文件直接提交  
 git commit --amend 修补命令  
 git commit -c 修改重用提交信息 -C直接使用不修改  
-git commit -F
+git commit -F 从文件读取
 
 ## git stash
 git stash list 显示所有  
@@ -59,6 +59,15 @@ git stash drop 删除
 git stash clear 清空Stash
 
 ## git tag
+git tag  显示所有标签  
+git tag -a *tagtName* -m *tagMessage* 创建tag  
+git show *tagNmae*  显示tag详细信息  
+git tag -s GPG密钥签署  
+git tag -v GPG验证  
+git push origin *tagName* 推送标签到远程  
++ 里程碑共享，必须显式的推送。即在推送命令的参数中，标明要推送哪个里程碑。
++ 执行获取或拉回操作，自动从远程版本库获取新里程碑，并在本地版本库中创建。
++ 如果本地已有同名的里程碑，默认不会从上游同步里程碑，即使两者里程碑的指向是不同的。
 
 ## git push
 
