@@ -35,7 +35,8 @@ git checkout [-q] [<commit>] [--] <paths>...  使用<commit\>版本覆盖工作�
 git checkout – filename 撤销git .add <filename> 命令[使用*暂存区*文件覆盖*工作区*修改]  
 git checkout branch – filename 将branch所指向的提交中的filename替换*暂存区*和*工作区*中相应的文件。
 git checkout . 重置*工作区*，使用*暂存区*进行覆盖  
-git checkout HEAD . 重置*工作区*，使用*版本库*进行覆盖
+git checkout HEAD . 重置*工作区*，使用*版本库*进行覆盖  
+git checkout -b <new_branch\> <remote\>/<branch\>  拉取远程分支并创建新分支
 
 ## git reset
 <paths\> 有：重置指定路径文件 无：重置引用  
@@ -64,19 +65,27 @@ git tag -a *tagtName* -m *tagMessage* 创建tag
 git show *tagNmae*  显示tag详细信息  
 git tag -s GPG密钥签署  
 git tag -v GPG验证  
-git push origin *tagName* 推送标签到远程  
+git push origin *tagName* 推送标签到远程版本库    
+git push <remote_url>  :<tagname\> 删除远程版本库tag
 + 里程碑共享，必须显式的推送。即在推送命令的参数中，标明要推送哪个里程碑。
 + 执行获取或拉回操作，自动从远程版本库获取新里程碑，并在本地版本库中创建。
 + 如果本地已有同名的里程碑，默认不会从上游同步里程碑，即使两者里程碑的指向是不同的。
 
 ## git push
+git push <remote> <new_branch> 创建远程分支  
+git remote -v 显示remote信息
+git remote set-url *remoteName* 修改remote信息
+git remote add 添加remote
 
 ## git pull
+git pull --rebase  设置变基而不是合并
+git config branch.<branchname>.rebase true 设置pull默认采用rebase  
+
 
 ## Tips
 git rm --cache <filename\> 取消文件追踪  
 git reflog show master | head -5 显示  
-HEAD^ master@{n} 引用表示
+HEAD^ HEAD~3 master@{n} 引用表示
 
 ### Markdown 的使用
 \# 一级标题  \#\#二级标题  
