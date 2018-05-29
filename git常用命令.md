@@ -34,7 +34,8 @@ git checkout [<brach\>] 切换分支
 git checkout [-q] [<commit>] [--] <paths>...  使用<commit\>版本覆盖工作区 如果省略<commit\>则指定*暂存区*进行覆盖  
 git checkout – filename 撤销git .add <filename> 命令[使用*暂存区*文件覆盖*工作区*修改]  
 git checkout branch – filename 将branch所指向的提交中的filename替换*暂存区*和*工作区*中相应的文件。
-git checkout . 重置*工作区*，使用*工作区*进行覆盖  
+git checkout . 重置*工作区*，使用*暂存区*进行覆盖  
+git checkout HEAD . 重置*工作区*，使用*版本库*进行覆盖
 
 ## git reset
 <paths\> 有：重置指定路径文件 无：重置引用  
@@ -52,6 +53,9 @@ git commit -amend
 ## git push
 
 ## git pull
+
+## Tips
+git rm --cache <filename\> 取消文件追踪  
 
 ### Markdown 的使用
 \# 一级标题  \#\#二级标题  
