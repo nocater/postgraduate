@@ -33,7 +33,7 @@ git checkout [<brach\>] 切换分支
 **git checout <file> 目标是工作区的文件**  
 git checkout [-q] [<commit\>] [--] <paths\>...  使用<commit\>版本覆盖工作区 如果省略<commit\>则指定*暂存区*进行覆盖  
 git checkout <filename\> 撤销git .add <filename\> 命令[使用*暂存区*文件覆盖*工作区*修改]  
-git checkout branch <filename\> 将branch所指向的提交中的filename替换*暂存区*和*工作区*中相应的文件。
+git checkout branch <filename\> 将branch所指向的提交中的filename替换*暂存区*和*工作区*中相应的文件。  
 git checkout . 重置*工作区*，使用*暂存区*进行覆盖  
 git checkout HEAD . 重置*工作区*，使用*版本库*进行覆盖  
 git checkout -b <new_branch\> <remote\>/<branch\>  拉取远程分支并创建新分支
@@ -81,11 +81,18 @@ git remote add 添加remote
 git pull --rebase  设置变基而不是合并
 git config branch.<branchname\>.rebase true 设置pull默认采用rebase  
 
+## git log
+git log --graph  
+git log --pretty=online <filnename> 查看文件提交历史
+> 一种格式化日志输出  
+git config alias.lg log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative core.quotepath=false
+
 
 ## Tips
 git rm --cache <filename\> 取消文件追踪  
 git reflog show master | head -5 显示  
-HEAD^ HEAD~3 master@{n} 引用表示
+HEAD^ HEAD~3 master@{n} 引用表示  
+git config --global --list 显示git global 配置信息
 
 ### Markdown 的使用
 \# 一级标题  \#\#二级标题  
