@@ -7,7 +7,7 @@ git diff HEAD 比较*工作区*和*版本库*的文件
 patch 恢复操作
 
 ## git clone
-git clone <git_url\> master <local_floder\> 克隆项目  
+git clone <git_url\> <local_floder\> 克隆项目
 git colne <git_url\> -b 远程分支 <local_floder\> 拉取特定分支  
 
 ## git branch
@@ -82,7 +82,7 @@ git pull --rebase  设置变基而不是合并
 git config branch.<branchname\>.rebase true 设置pull默认采用rebase  
 
 ## git log
-git log --graph  
+git log --graph  图显日志
 git log --pretty=online <filnename> 查看文件提交历史
 > 一种格式化日志输出  
 git config alias.lg log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative core.quotepath=false
