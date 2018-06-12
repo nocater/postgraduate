@@ -7,13 +7,14 @@ git diff HEAD 比较*工作区*和*版本库*的文件
 patch 恢复操作
 
 ## git clone
-git clone <git_url\> <local_floder\> 克隆项目
+git clone <git_url\> <local_floder\> 克隆项目  
 git colne <git_url\> -b 远程分支 <local_floder\> 拉取特定分支  
 
 ## git branch
 git branch new_branch 创建新的分支  
-git branch -l 显示所有分支  
-git branch -v 显示所有分支及最后提交信息  
+git branch -l 显示本地分支  
+git branch -v 显示分支最后commit信息  
+git branch -a 显示远程分支  
 git branch -d branch 删除分支  
 git branch -D 强制删除未合并的分支  
 
@@ -42,7 +43,7 @@ git checkout -b <new_branch\> <remote\>/<branch\>  拉取远程分支并创建�
 <paths\> 有：重置指定路径文件 无：重置引用  
 git reset [HEAD] 重置*暂存区*  
 git reset HEAD --hard 使用*版本库*重置*暂存区*和*工作区*  
-git reset HEAD --soft 仅重置引用，不重置*暂存区*和*工作区*
+git reset HEAD --soft 仅重置引用，不重置*暂存区*和*工作区*  
 git reset [-mixed] HEAD^ 回退一次引用，并使用其覆盖*暂存区*
 
 ## git commit
@@ -65,25 +66,26 @@ git tag -a *tagtName* -m *tagMessage* 创建tag
 git show *tagNmae*  显示tag详细信息  
 git tag -s GPG密钥签署  
 git tag -v GPG验证  
-git push origin *tagName* 推送标签到远程版本库    
-git push <remote_url\>  :<tagname\> 删除远程版本库tag
+git push origin *tagName* 推送标签到远程版本库   
+git push <remote_url\>  :<tagname\> 删除远程版本库tag  
 + 里程碑共享，必须显式的推送。即在推送命令的参数中，标明要推送哪个里程碑。
 + 执行获取或拉回操作，自动从远程版本库获取新里程碑，并在本地版本库中创建。
 + 如果本地已有同名的里程碑，默认不会从上游同步里程碑，即使两者里程碑的指向是不同的。
 
 ## git push
 git push <remote\> <new_branch\> 创建远程分支  
-git remote -v 显示remote信息
-git remote set-url *remoteName* 修改remote信息
-git remote add 添加remote
+git push <remote|> :<branch\> 删除远程分支  
+git remote -v 显示remote信息  
+git remote set-url *remoteName* 修改remote信息  
+git remote add 添加remote  
 
 ## git pull
-git pull --rebase  设置变基而不是合并
+git pull --rebase  设置变基而不是合并  
 git config branch.<branchname\>.rebase true 设置pull默认采用rebase  
 
 ## git log
-git log --graph  图显日志
-git log --pretty=online <filnename> 查看文件提交历史
+git log --graph  图显日志  
+git log --pretty=online <filnename> 查看文件提交历史  
 > 一种格式化日志输出  
 git config alias.lg log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative core.quotepath=false
 
@@ -92,7 +94,7 @@ git config alias.lg log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Cr
 git rm --cache <filename\> 取消文件追踪  
 git reflog show master | head -5 显示  
 HEAD^ HEAD~3 master@{n} 引用表示  
-git config --global --list 显示git global 配置信息
+git config --global --list 显示git global 配置信息  
 
 ### Markdown 的使用
 \# 一级标题  \#\#二级标题  
