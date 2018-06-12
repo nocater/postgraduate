@@ -17,7 +17,7 @@ if __name__ == '__main__':
     概率模型 数据缩放与否没有影响 依赖于数据的分布
     """
     path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
-    fe = feature_energing(file=path, regression=True, info=False)
+    fe = feature_energing(file=path, regression=True, info=True)
     fe.preprocess()
     df = fe.target_df
     X = df.iloc[:, :-1]
@@ -48,13 +48,20 @@ if __name__ == '__main__':
     r = pd.DataFrame({'Element': ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', 'T2', 'T3'],
                       'IG': rfr.feature_importances_,
                       'PEARSON': [pearsonr(X[col], Y)[0] for col in X.columns],
-                      'first_pearson':[0.16073617667501566, 0.35782645935916213, -0.08852243529386863, -0.0601456703687851,
-                                        0.38983403824909374, 0.056369689455119845, 0.16734508341279708, np.nan,-0.730404789856856,
-                                    -0.018895141259420416]
+                      # 'first_pearson':[0.16073617667501566, 0.35782645935916213, -0.08852243529386863, -0.0601456703687851,
+                      #                   0.38983403824909374, 0.056369689455119845, 0.16734508341279708, np.nan,-0.730404789856856,
+                      #               -0.018895141259420416]
                       })
-    r = r.sort_values('IG')
+    # 按皮尔森系数绝对值排序
+    indexs = r.PEARSON.abs().sort_values(ascending=False).index
+    r = r.loc[list(indexs)]
+    r.index=[1,2,3,4,5,6,7,8,9,10]
+
+    # 按IG排序
+    r = r.sort_values('IG', ascending=False)
     print(r)
-    # r.to_csv(r'C:\Users\chenshuai\Documents\材料学院\docs\IG_pearson.csv', index=False)
+
+    r.to_csv(r'C:\Users\chenshuai\Documents\材料学院\docs\IG_pearson.csv', index=True)
     # print(pearsonr(fe.target_df, Y))
     # ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', 'Co', 'T2', 'T3', '抗拉强度']
     # [0.28326462 0.10479349 0.07890757 0.0313342  0.11564087 0.0483494
