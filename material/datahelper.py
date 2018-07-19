@@ -1,3 +1,10 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+
 class feature_energing:
     """
         数据处理
