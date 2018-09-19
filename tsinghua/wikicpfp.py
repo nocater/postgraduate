@@ -4,6 +4,7 @@ from lxml import etree
 import time
 import json
 from operator import itemgetter, attrgetter
+from datetime import datetime
 
 class thConference:
     """
@@ -11,8 +12,9 @@ class thConference:
     """
     def __init__(self, name=None, abbr=None,
                  link=None, official_link:'会议官网'=None,
-                 year=None, when=None,
-                 where=None,
+                 year=None,
+                 stardate=None,
+                 enddate=None,
                  submission_deadline=None,
                  notification_due=None,
                  final_version_due=None,
@@ -22,8 +24,8 @@ class thConference:
         self.link = link
         self.official_link = official_link
         self.year = year
-        self.when = when
-        self.where = where
+        self.stardate = stardate
+        self.enddate = enddate
         self.submission_deadline = submission_deadline
         self.notification_due = notification_due
         self.final_version_due = final_version_due
@@ -94,7 +96,11 @@ for conf in confs[:5]:
         if len(offilical_link)==1: event.official_link = offilical_link[0]
 
         when = page.xpath('//th[contains(text(),"When")]/following-sibling::td/text()')
-        if when and len(when)==1 : event.when = when[0].strip()
+        if when and len(when)==1:
+            when = when[0].strip()
+            stardate, enddate = [datetime.strptime(i.strip(), '%b %d, %Y') for i in when.split('-')]
+            event.stardate = datetime.strftime(stardate, '%Y-%m-%d')
+            event.enddate = datetime.strftime(enddate, '%Y-%m-%d')
 
         where = page.xpath('//th[contains(text(),"Where")]/following-sibling::td/text()')
         if where and len(where)==1: event.where = where[0].strip()
@@ -140,5 +146,5 @@ for conf in confs[:5]:
 
 # 将对象序列化 使用json
 data = json.dumps(confs, default=lambda obj: obj.__dict__)
-with open(r'D:\cfppp.json', 'w') as f:
+with open(r'D:\cfp.json', 'w') as f:
     f.write(data)
