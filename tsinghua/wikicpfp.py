@@ -92,6 +92,9 @@ for conf in confs[:5]:
         response = requests.get(event.link)
         page = etree.HTML(response.text)
 
+        thname = page.xpath('//span[@property="v:description"]/text()')
+        if thname and len(thname)==1: event.name = thname
+
         offilical_link = page.xpath('//td[contains(text(), "Link:")]/a/@href')
         if len(offilical_link)==1: event.official_link = offilical_link[0]
 
