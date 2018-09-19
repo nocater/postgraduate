@@ -99,31 +99,31 @@ for conf in confs[:5]:
         if len(offilical_link)==1: event.official_link = offilical_link[0]
 
         when = page.xpath('//th[contains(text(),"When")]/following-sibling::td/text()')
-        if when and len(when)==1:
+        if when and len(when)==1 and when[0].strip() != 'N/A':
             when = when[0].strip()
             stardate, enddate = [datetime.strptime(i.strip(), '%b %d, %Y') for i in when.split('-')]
             event.stardate = datetime.strftime(stardate, '%Y-%m-%d')
             event.enddate = datetime.strftime(enddate, '%Y-%m-%d')
 
         where = page.xpath('//th[contains(text(),"Where")]/following-sibling::td/text()')
-        if where and len(where)==1: event.where = where[0].strip()
+        if where and len(where)==1 and where[0].strip() != 'N/A': event.where = where[0].strip()
 
         submission_deadine = page.xpath(
             '//th[contains(text(),"Submission")]/following-sibling::td//span/span[@property="v:startDate"]'
             '/@content')
-        if submission_deadine and len(submission_deadine)==1:
+        if submission_deadine and len(submission_deadine)==1 and submission_deadine[0].strip() != 'N/A':
             event.submission_deadline = submission_deadine[0].strip().split('T')[0]
 
         notification_due = page.xpath(
             '//th[contains(text(),"Notification")]/following-sibling::td//span/span[@property="v:startDate"]'
             '/@content')
-        if notification_due and len(notification_due)==1:
+        if notification_due and len(notification_due)==1 and notification_due[0].strip() != 'N/A':
             event.notification_due = notification_due[0].strip().split('T')[0]
 
         final_version_due = page.xpath(
             '//th[contains(text(),"Final")]/following-sibling::td//span/span[@property="v:startDate"]'
             '/@content')
-        if final_version_due and len(final_version_due)==1:
+        if final_version_due and len(final_version_due)==1 and final_version_due[0].strip() != 'N/A':
             event.final_version_due = final_version_due[0].strip().split('T')[0]
 
         categories = page.xpath('//a[@class="blackbold"]/following-sibling::a/text()')
@@ -139,7 +139,7 @@ for conf in confs[:5]:
     conf.event = events
 
     # 判断会议主网站是否存在
-    offilical_links = [e.official_link.split('/')[2] for e in events]
+    offilical_links = [e.official_link.split('/')[2] for e in events if e.official_link]
     if offilical_links and len(set(offilical_links))==1:
         conf.main_link = 'http://'+offilical_links[0]
 
