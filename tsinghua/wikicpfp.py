@@ -9,7 +9,14 @@ class thConference:
     """
     每一届具体会议的对象
     """
-    def __init__(self, name=None, abbr=None, link=None, official_link:'会议官网'=None, year=None, when=None, where=None, submission_deadline=None, notification_due=None, final_version_due=None):
+    def __init__(self, name=None, abbr=None,
+                 link=None, official_link:'会议官网'=None,
+                 year=None, when=None,
+                 where=None,
+                 submission_deadline=None,
+                 notification_due=None,
+                 final_version_due=None,
+                 categories=None):
         self.name = name
         self.abbr = abbr
         self.link = link
@@ -20,13 +27,17 @@ class thConference:
         self.submission_deadline = submission_deadline
         self.notification_due = notification_due
         self.final_version_due = final_version_due
+        self.categories = categories
 
 
 class Conference:
-    def __init__(self, name:'会议全程'=None, abbr:'会议别称'=None, link:'链接地址'=None, past=None, future=None, event:list()=None):
+    def __init__(self, name:'会议全程'=None, abbr:'会议别称'=None,
+                 link:'链接地址'=None, main_link:'会议主网址'=None,
+                 past=None, future=None, event:list()=None):
         self.name = name
         self.abbr = abbr
         self.link = link
+        self.main_link = main_link
         self.past = past
         self.future = future
         self.event = event
@@ -55,11 +66,11 @@ for url in urls:
     break
 
 # 对每个会议进行详细抓取
-for conf in confs:
+for conf in confs[:5]:
     response = requests.get(conf.link)
     page = etree.HTML(response.text)
 
-    past = page.xpath('//span[@class="theme"]/following-sibling::a/text()')
+    past = page.xpath('//span[@class="theme"]/following-sibling::a/@href')
     if past and len(past)==1: conf.past = past[0]
     future = page.xpath('//following-sibling::span[@class="theme"]/following-sibling::span/a/text()')
     if future and len(future)==1: conf.future = int(future[0].split(' ')[0])
@@ -77,7 +88,7 @@ for conf in confs:
     for event in events:
         print("抓取届信息",event.year)
         response = requests.get(event.link)
-        page = etree.HTML(response.text)#"//a[contains(@href, '3')]/@href")
+        page = etree.HTML(response.text)
 
         offilical_link = page.xpath('//td[contains(text(), "Link:")]/a/@href')
         if len(offilical_link)==1: event.official_link = offilical_link[0]
@@ -106,18 +117,28 @@ for conf in confs:
         if final_version_due and len(final_version_due)==1:
             event.final_version_due = final_version_due[0].strip().split('T')[0]
 
+        categories = page.xpath('//a[@class="blackbold"]/following-sibling::a/text()')
+        event.categories = categories
+
+
         # print(event.when, event.where, event.submission_deadline, event.notification_due, event.final_version_due, sep=" = ")
         # time.sleep(1)
         # break # 只抓一届会议
+
     # 将会议按年份排序
     events = sorted(events, key=attrgetter('year'), reverse=True)
-    [print(e.year) for e in events]
     conf.event = events
+
+    # 判断会议主网站是否存在
+    offilical_links = [e.official_link.split('/')[2] for e in events]
+    if offilical_links and len(set(offilical_links))==1:
+        conf.main_link = 'http://'+offilical_links[0]
 
     # [print(e.year, e.abbr, e.name, e.link) for e in events]
     # break #只抓一个会议
 
+
 # 将对象序列化 使用json
 data = json.dumps(confs, default=lambda obj: obj.__dict__)
-with open(r'D:\cfp.json', 'w') as f:
+with open(r'D:\cfppp.json', 'w') as f:
     f.write(data)
