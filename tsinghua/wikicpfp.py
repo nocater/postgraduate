@@ -3,6 +3,7 @@ import requests
 from lxml import etree
 import time
 import json
+from operator import itemgetter, attrgetter
 
 class thConference:
     """
@@ -54,22 +55,23 @@ for url in urls:
     break
 
 # 对每个会议进行详细抓取
-for conf in confs[0:3]:
+for conf in confs:
     response = requests.get(conf.link)
     page = etree.HTML(response.text)
 
-    past = page.xpath('//span[@class="theme"]/following-sibling::a')
-    if past is not None: conf.past = past[0].text
-    future = page.xpath('//following-sibling::span[@class="theme"]/following-sibling::span/a')
-    if future is not None: conf.future = future[0].text
+    past = page.xpath('//span[@class="theme"]/following-sibling::a/text()')
+    if past and len(past)==1: conf.past = past[0]
+    future = page.xpath('//following-sibling::span[@class="theme"]/following-sibling::span/a/text()')
+    if future and len(future)==1: conf.future = int(future[0].split(' ')[0])
 
+    print('抓取会议', conf.abbr, conf.link)
     # 2 抓取所有届会议信息
     events = []
     bgcolors = ['#f6f6f6', '#e6e6e6']
     for bgcolor in bgcolors:
         a_s = page.xpath('//tr[@bgcolor="' + bgcolor + '"]/td/a')
         for a in a_s:
-            events.append(thConference(abbr=a.text, name=conf.name, year=int(a.text.strip().split()[1]),link=domin+a.attrib['href']))
+            events.append(thConference(abbr=a.text, name=conf.name, year=int(a.text.strip().split()[-1]),link=domin+a.attrib['href']))
 
     # 2.1抓取届会议详细信息
     for event in events:
@@ -104,15 +106,18 @@ for conf in confs[0:3]:
         if final_version_due and len(final_version_due)==1:
             event.final_version_due = final_version_due[0].strip().split('T')[0]
 
-        print(event.when, event.where, event.submission_deadline, event.notification_due, event.final_version_due, sep=" = ")
-        time.sleep(1)
+        # print(event.when, event.where, event.submission_deadline, event.notification_due, event.final_version_due, sep=" = ")
+        # time.sleep(1)
         # break # 只抓一届会议
+    # 将会议按年份排序
+    events = sorted(events, key=attrgetter('year'), reverse=True)
+    [print(e.year) for e in events]
     conf.event = events
 
     # [print(e.year, e.abbr, e.name, e.link) for e in events]
     # break #只抓一个会议
 
 # 将对象序列化 使用json
-data = json.dumps(confs[0:2], default=lambda obj: obj.__dict__)
+data = json.dumps(confs, default=lambda obj: obj.__dict__)
 with open(r'D:\cfp.json', 'w') as f:
     f.write(data)
