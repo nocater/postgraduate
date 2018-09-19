@@ -33,7 +33,6 @@ class Conference:
 
 domin = 'http://www.wikicfp.com/'
 urls = ['http://www.wikicfp.com/cfp/series?t=c&i='+chr(i) for i in range(65,65+26)]
-urls = ['http://www.wikicfp.com/cfp/series?t=c&i=O']
 
 
 # 按字母表顺序抓取会议URL
@@ -55,7 +54,7 @@ for url in urls:
     break
 
 # 对每个会议进行详细抓取
-for conf in confs:
+for conf in confs[0:3]:
     response = requests.get(conf.link)
     page = etree.HTML(response.text)
 
@@ -107,9 +106,13 @@ for conf in confs:
 
         print(event.when, event.where, event.submission_deadline, event.notification_due, event.final_version_due, sep=" = ")
         time.sleep(1)
-        break # 只抓一届会议
+        # break # 只抓一届会议
     conf.event = events
 
     # [print(e.year, e.abbr, e.name, e.link) for e in events]
-    break #只抓一个会议
+    # break #只抓一个会议
 
+# 将对象序列化 使用json
+data = json.dumps(confs[0:2], default=lambda obj: obj.__dict__)
+with open(r'D:\cfp.json', 'w') as f:
+    f.write(data)
