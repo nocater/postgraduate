@@ -75,7 +75,7 @@ for conf in confs[:5]:
     past = page.xpath('//span[@class="theme"]/following-sibling::a/@href')
     if past and len(past)==1: conf.past = past[0]
     future = page.xpath('//following-sibling::span[@class="theme"]/following-sibling::span/a/text()')
-    if future and len(future)==1: conf.future = int(future[0].split(' ')[0])
+    if future and len(future)>0: conf.future = int(future[0].split(' ')[0])
 
     print('抓取会议', conf.abbr, conf.link)
     # 2 抓取所有届会议信息
