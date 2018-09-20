@@ -11,10 +11,9 @@ from tsinghua.thConference import thConference
 domin = 'http://www.wikicfp.com/'
 urls = ['http://www.wikicfp.com/cfp/series?t=c&i='+chr(i) for i in range(65,65+26)]
 
-
 # 按字母表顺序抓取会议URL
 confs = []
-for url in urls:
+for url in urls[:1]:
     response = requests.get(url)
     page = etree.HTML(response.text)
     bgcolors = ['#f6f6f6', '#e6e6e6']
@@ -27,7 +26,7 @@ for url in urls:
             confs.append(Conference(name=td, abbr=a.text, link=domin+a.attrib['href']))
 
     # [print(c.abbr, c.name, c.link ,sep=':') for c in confs]
-    print('已经抓取',len(confs),'会议URL')
+    print('已经抓取', len(confs), '会议URL')
     break
 
 # 对每个会议进行详细抓取
@@ -57,6 +56,9 @@ for conf in confs[:5]:
 
         thname = page.xpath('//span[@property="v:description"]/text()')
         if thname and len(thname)==1: event.name = thname
+
+        series = page.xpath('//*/text()')
+        if 'Conference Series' in ''.join(series): conf.series =1
 
         offilical_link = page.xpath('//td[contains(text(), "Link:")]/a/@href')
         if len(offilical_link)==1: event.official_link = offilical_link[0]
@@ -112,5 +114,5 @@ for conf in confs[:5]:
 
 # 将对象序列化 使用json
 data = json.dumps(confs, default=lambda obj: obj.__dict__)
-with open(r'D:\cfp.json', 'w') as f:
+with open(r'D:\Documents\清华数据任务\data\cfp.json', 'w') as f:
     f.write(data)
