@@ -5,45 +5,8 @@ import time
 import json
 from operator import itemgetter, attrgetter
 from datetime import datetime
-
-class thConference:
-    """
-    每一届具体会议的对象
-    """
-    def __init__(self, name=None, abbr=None,
-                 link=None, official_link:'会议官网'=None,
-                 year=None,
-                 stardate=None,
-                 enddate=None,
-                 submission_deadline=None,
-                 notification_due=None,
-                 final_version_due=None,
-                 categories=None):
-        self.name = name
-        self.abbr = abbr
-        self.link = link
-        self.official_link = official_link
-        self.year = year
-        self.stardate = stardate
-        self.enddate = enddate
-        self.submission_deadline = submission_deadline
-        self.notification_due = notification_due
-        self.final_version_due = final_version_due
-        self.categories = categories
-
-
-class Conference:
-    def __init__(self, name:'会议全程'=None, abbr:'会议别称'=None,
-                 link:'链接地址'=None, main_link:'会议主网址'=None,
-                 past=None, future=None, event:list()=None):
-        self.name = name
-        self.abbr = abbr
-        self.link = link
-        self.main_link = main_link
-        self.past = past
-        self.future = future
-        self.event = event
-
+from tsinghua.Conference import Conference
+from tsinghua.thConference import thConference
 
 domin = 'http://www.wikicfp.com/'
 urls = ['http://www.wikicfp.com/cfp/series?t=c&i='+chr(i) for i in range(65,65+26)]
