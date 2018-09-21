@@ -2,7 +2,7 @@ class thConference:
     """
     每一届具体会议的对象
     """
-    def __init__(self, name=None, abbr=None,
+    def __init__(self, thname=None, thabbr=None,
                  link=None, official_link:'会议官网'=None,
                  year=None,
                  stardate=None,
@@ -11,8 +11,8 @@ class thConference:
                  notification_due=None,
                  final_version_due=None,
                  categories=None):
-        self.name = name
-        self.abbr = abbr
+        self.thname = thname
+        self.thabbr = thabbr
         self.link = link
         self.official_link = official_link
         self.year = year
