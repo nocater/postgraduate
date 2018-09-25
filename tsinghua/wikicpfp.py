@@ -35,10 +35,7 @@ def parseConference(conf: Conference):
     for event in events:
         print('解析届会议', event.year)
         event, series = parsethConf(event)
-        if series and conf.series is False:
-            id = conf.link.split('id=')[1].split('&')[0]
-            conf.series = id
-            # conf.series = series
+        if series: conf.series = series
 
         # print(event.stardate, event.submission_deadline, event.notification_due, event.final_version_due, sep=" = ")
         # time.sleep(1)
@@ -64,8 +61,8 @@ def parsethConf(event: thConference=None):
     thname = page.xpath('//span[@property="v:description"]/text()')
     if thname and len(thname) == 1: event.thname = thname[0]
 
-    series = page.xpath('//*/text()')
-    if 'Conference Series' in ''.join(series): SERIES = True
+    series = page.xpath('//a[contains(@href,"/cfp/program?id=")]/@href')
+    if series : SERIES = series[0].split('id=')[1].split('&')[0]
 
     offilical_link = page.xpath('//td[contains(text(), "Link:")]/a/@href')
     if len(offilical_link) == 1: event.official_link = offilical_link[0]
