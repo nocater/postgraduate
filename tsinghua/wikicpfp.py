@@ -28,14 +28,17 @@ def parseConference(conf: Conference):
     for bgcolor in bgcolors:
         a_s = page.xpath('//tr[@bgcolor="' + bgcolor + '"]/td/a')
         for a in a_s:
-            events.append(thConference(abbr=a.text, name=conf.name, year=int(a.text.strip().split()[-1]),
+            events.append(thConference(thabbr=a.text, thname=conf.name, year=int(a.text.strip().split()[-1]),
                                        link=domin + a.attrib['href']))
 
     # 2.1抓取届会议详细信息
     for event in events:
         print('解析届会议', event.year)
         event, series = parsethConf(event)
-        if series and conf.series is False: conf.series = series
+        if series and conf.series is False:
+            id = conf.link.split('id=')[1].split('&')[0]
+            conf.series = id
+            # conf.series = series
 
         # print(event.stardate, event.submission_deadline, event.notification_due, event.final_version_due, sep=" = ")
         # time.sleep(1)
@@ -59,7 +62,7 @@ def parsethConf(event: thConference=None):
     page = etree.HTML(response.text)
 
     thname = page.xpath('//span[@property="v:description"]/text()')
-    if thname and len(thname) == 1: event.name = thname
+    if thname and len(thname) == 1: event.thname = thname[0]
 
     series = page.xpath('//*/text()')
     if 'Conference Series' in ''.join(series): SERIES = True
