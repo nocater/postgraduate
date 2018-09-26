@@ -7,6 +7,7 @@ from operator import itemgetter, attrgetter
 from datetime import datetime
 from tsinghua.Conference import Conference
 from tsinghua.thConference import thConference
+import re
 
 
 def parseConference(conf: Conference):
@@ -28,12 +29,14 @@ def parseConference(conf: Conference):
     for bgcolor in bgcolors:
         a_s = page.xpath('//tr[@bgcolor="' + bgcolor + '"]/td/a')
         for a in a_s:
-            events.append(thConference(thabbr=a.text, thname=conf.name, year=int(a.text.strip().split()[-1]),
+            year = a.text.strip().split()[-1]
+            year = re.findall('\d{1,4}', year)[0]
+            events.append(thConference(thabbr=a.text, thname=conf.name, year=int(year),
                                        link=domin + a.attrib['href']))
 
     # 2.1抓取届会议详细信息
     for event in events:
-        print('解析届会议', event.year)
+        # print('解析届会议', event.year)
         event, series = parsethConf(event)
         if series: conf.series = series
 
@@ -41,6 +44,7 @@ def parseConference(conf: Conference):
         # time.sleep(1)
         # break # 只抓一届会议
 
+    print('抓取届会议信息完成', len(events))
     # 将会议按年份排序
     events = sorted(events, key=attrgetter('year'), reverse=True)
     conf.event = events
@@ -54,12 +58,12 @@ def parseConference(conf: Conference):
 
 
 def parsethConf(event: thConference=None):
-    SERIES = False
+    SERIES = None
     response = requests.get(event.link)
     page = etree.HTML(response.text)
 
     thname = page.xpath('//span[@property="v:description"]/text()')
-    if thname and len(thname) == 1: event.thname = thname[0]
+    if thname and len(thname) == 1: event.thname = thname[0].strip()
 
     series = page.xpath('//a[contains(@href,"/cfp/program?id=")]/@href')
     if series : SERIES = series[0].split('id=')[1].split('&')[0]
@@ -100,6 +104,26 @@ def parsethConf(event: thConference=None):
     return event, SERIES
 
 
+def getAllAbbts():
+    """
+    获取所有的更新页面会议简称
+    :return:
+    """
+    urls = [r'http://www.wikicfp.com/cfp/allcfp?page=' + str(i) for i in range(1, 11)]
+    domin = r'http://www.wikicfp.com'
+    thabbrs = []
+
+    for url in urls:
+        response = requests.get(url)
+        page = etree.HTML(response.text)
+
+        bgcolors = ['#f6f6f6', '#e6e6e6']
+        for bgcolor in bgcolors:
+            temp = page.xpath('//tr[@bgcolor="' + bgcolor + '"]/td/a/text()')
+            thabbrs.extend(temp)
+    print('Updated all thConference abbrs:', len(thabbrs))
+    return thabbrs
+
 if __name__ == '__main__':
     domin = 'http://www.wikicfp.com/'
     urls = ['http://www.wikicfp.com/cfp/series?t=c&i='+chr(i) for i in range(65,65+26)]
@@ -120,7 +144,7 @@ if __name__ == '__main__':
 
         # [print(c.abbr, c.name, c.link ,sep=':') for c in confs]
         print('已经抓取', len(confs), '会议URL')
-        break
+        # break
 
     # 对每个会议进行详细抓取
     for conf in confs[:5]:

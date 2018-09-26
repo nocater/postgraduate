@@ -11,3 +11,16 @@ class Conference:
         self.past = past
         self.future = future
         self.event = event
+
+    def todict(self):
+        return {
+            '_type': 'Conference',
+            'name': self.name,
+            'abbr': self.abbr,
+            'series': self.series,
+            'link': self.link,
+            'main_link': self.main_link,
+            'past': self.past,
+            'future': self.future,
+            'event': [e.__dict__ for e in self.event]
+        }
