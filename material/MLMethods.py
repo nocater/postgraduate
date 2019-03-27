@@ -1,7 +1,7 @@
 import numpy as np
 from material.datahelper import feature_energing
 import pandas as pd
-from sklearn.model_selection import cross_val_predict, cross_val_score
+from sklearn.model_selection import cross_val_predict, cross_val_predict, cross_val_score
 import random
 
 
