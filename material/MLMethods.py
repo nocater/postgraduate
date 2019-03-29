@@ -24,16 +24,21 @@ def evaluate_regression(y, y_pred):
     from sklearn.metrics import mean_absolute_error, mean_squared_error
     y = y.ravel()
     y_pred = y_pred.ravel()
+
+    #
+    y = y*(2500 - 900) + 900
+    y_pred = y_pred *(2500 - 900) + 900
+
     MAE = int(mean_absolute_error(y, y_pred))
     MSE = int(mean_squared_error(y, y_pred))
     RMSE = int(np.sqrt(mean_squared_error(y, y_pred)))
     # print(f'MAE:{int(mean_absolute_error(y, y_pred))}')
     # print(f'MSE:{int(mean_squared_error(y, y_pred))}')
     # print(f'RMSE:{int(np.sqrt(mean_squared_error(y, y_pred)))}')
-    index = np.random.randint(1, 100)
+    index = np.random.randint(1, 50)
     result = pd.DataFrame([y[index:index+5], y_pred[index:index+5]], index=['y', 'y_pred'])
-    # print('抽样随机结果对比：')
-    # print(result)
+    print('抽样随机结果对比：')
+    print(result)
     return MAE,MSE,RMSE
 
 
@@ -56,16 +61,20 @@ def generate_models():
 
 
 if __name__=='__main__':
-    BASE_PATH = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总2018'
+    BASE_PATH = r'D:\Documents\材料学院\data\贝氏体钢数据统计-总2018'
     files = ['0421', '0502']
     # 所有的回归模型
     regressions = generate_models()
     # 每次数据集的结果
     results = []
 
-    for file in files:
-        print('数据集：',file)
-        fe = feature_energing(BASE_PATH + file + '.xlsx', info=False, regression=True)
+    for file in files[1:]:
+        print('============数据集============：',file)
+        fe = feature_energing(BASE_PATH + file + '.xlsx', info=True, regression=True, columns = ['C', 'Si', 'Mn', 'Ni', 'Cr', 'Mo', 'Al', '等温温度T2', '回火温度T3', '抗拉强度'], ranges = {'C': [0, 1.2],
+                                   'Si': [0, 4],
+                                   'T3': [320, 320],
+                                   'Y': [900, 2500],
+                                   })
         X_train, X_test, y_train, y_test = fe.preprocess()
         X = fe.X
         Y = fe.Y
@@ -78,7 +87,7 @@ if __name__=='__main__':
         df_eva = []
         for k,v in regressions.items():
 
-            scores = cross_val_score(v, X, Y, cv=2, scoring='r2')
+            scores = cross_val_score(v, X, Y, cv=5, scoring='r2')
             print(k,scores.mean())
             v.fit(X_train, y_train)
             train_r2 = v.score(X_train, y_train)
