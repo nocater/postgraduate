@@ -4,6 +4,11 @@ import numpy as np
 from material.datahelper import feature_energing
 
 def show_distribute(path):
+    """
+    各元素分布统计图
+    :param path:
+    :return:
+    """
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-总20180421_pd.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     fe = feature_energing(file=path, regression=True, info=False)
@@ -22,6 +27,6 @@ def show_distribute(path):
 
 
 if __name__ == '__main__':
-    path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
+    path = r'D:\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
     # path = r'C:\Users\chenshuai\Documents\材料学院\贝氏体钢数据统计-chenshuai_pd.xlsx'
     show_distribute(path)
