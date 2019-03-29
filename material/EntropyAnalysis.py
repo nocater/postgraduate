@@ -16,7 +16,7 @@ if __name__ == '__main__':
     """
     概率模型 数据缩放与否没有影响 依赖于数据的分布
     """
-    path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
+    path = r'D:\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
     fe = feature_energing(file=path, regression=True, info=True)
     fe.preprocess()
     df = fe.target_df

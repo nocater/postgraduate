@@ -4,8 +4,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import numpy as np
 import pandas as pd
-
-path = r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
+"""
+假设模型为线性函数进行分析，并调研相关系数
+"""
+path = r'D:\Documents\材料学院\data\贝氏体钢数据统计-总20180502.xlsx'
 fe = feature_energing(file=path, regression=True, info=True)
 fe.preprocess()
 df = fe.target_df
@@ -38,6 +40,6 @@ print(f"RMSE:{np.sqrt(mean_squared_error(y_test, y_))}")
 print(lr.coef_)
 print(lr.intercept_)
 result = pd.DataFrame({'coef':np.append(lr.coef_,lr.intercept_)}, index=df.columns)
-result.rename()
+# result.rename()
 print(result)
 
