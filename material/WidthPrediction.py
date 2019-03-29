@@ -4,13 +4,13 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.model_selection import train_test_split
 
-df = pd.read_excel(r'C:\Users\chenshuai\Documents\材料学院\data\贝氏体板条宽度W公式拟合.xlsx')
+df = pd.read_excel(r'D:\Documents\材料学院\data\贝氏体板条宽度W公式拟合.xlsx')
 # df = df.rename(columns=dict(zip(df.columns,['C','T','theta','G','W','from','other'])))
 df = df.rename(columns={'C（wt.%)':'C','T(℃)':'T','σγ(MPa)':'sigma','ΔGγ→α(J)':'dG','Wαβ(μm)':'W'})
 df = df.loc[:, 'T':'W']
 df.W = df.W*1000
 
-x_train, x_test, y_train, y_test= train_test_split(df.iloc[:, :-1], df.W, test_size=0.3,random_state=3)
+x_train, x_test, y_train, y_test= train_test_split(df.iloc[:, :-1], df.W, test_size=0.3, random_state=3)
 
 print('线性分类无测试集 W = 0.406801 T + -0.314194σγ + -0.005893ΔGγ+ 18.746198 R2 0.81  MAE:13 MSE:301 RMSE:17')
 # 线性分类器
