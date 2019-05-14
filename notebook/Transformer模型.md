@@ -232,7 +232,28 @@ Attention is all you need这篇论文将'抛弃RNN及CNN的，完全基于Attent
 
 模型预测单词是使用线性映射和softmax两层来实现的。
 
-## 8.5 其它细节
+## 8.5 Mask
+
+Mask顾名思义就是**掩码**，是为了对某些位置进行遮罩，使其不产生效果。
+
+Transformer模型涉及了两种mask:**padding mask**和**sequence mask**。
+
+**Padding Mask**
+
+在数据的输入中，每个序列的长度是一样的，因此要对序列进行对齐，对较短的序列进行填充。这些填充位置不应该被attention注意，所以需要进行mask。具体的做法是，**将这些位置加上一个非常大的负数，这样经过softmax，其值接近于0**。
+
+**Sequence Mask**
+
+sequence mask 是为了让decoder不能看见未来的信息。也就是对应序列，在time_step为t的时刻，decoder应该只依赖于t时刻前的输出。具体的做法是：**产生一个上三角矩阵，上三角的值全为1，下三角的值权威0，对角线也是0**。把这个矩阵作用在每一个序列上，就可以达到我们的目的啦。
+
+
+
+所以：
+
+- 在decoder中，两种mask都使用，具体实现是两种mask相加
+- 其他情况都是padding mask
+
+## 8.6 其它细节
 
 论文中还提到了使用了Dropout、变化的学习率、Embedding层权重。
 
@@ -297,5 +318,7 @@ $W_1 \in \mathbb{R}^{d_{model}\times d_{ff}}, W_2 \in \mathbb{R}^{d_{ff}\times d
 - [The Illustrated Transformer](<https://jalammar.github.io/illustrated-transformer/>)
 
 - [The Illustrated Transformer[译]](<https://blog.csdn.net/yujianmin1990/article/details/85221271>)
+
+- [Transformer 模型的 PyTorch 实现](<https://juejin.im/post/5b9f1af0e51d450e425eb32d>)(Mask理解)
 
   
