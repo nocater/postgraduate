@@ -34,6 +34,7 @@ class feature_energing:
                                    'T3': [25, 450],
                                    'Y': [900, 2500],
                                    },
+                 rename: '列名更改' = {'等温温度T2': 'T2', '回火温度T3': 'T3', '抗拉强度': 'Y'}
                  ):
         self.columns = columns
         self.scaler = scaler
@@ -46,6 +47,7 @@ class feature_energing:
         self.ranges = ranges
         self.origin_df = pd.read_excel(file, header=2)
         self.origin_df = self.origin_df[self.origin_df.index.notnull()]
+        self.rename = rename
         pass
 
     def preprocess(self):
@@ -61,7 +63,7 @@ class feature_energing:
             df.info()
 
         # 重命名列名
-        df = df.rename(columns={'等温温度T2': 'T2', '回火温度T3': 'T3', '抗拉强度': 'Y'})
+        df = df.rename(columns=self.rename)
 
         ## 数据处理
         df = df.fillna(value=0)
