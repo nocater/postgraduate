@@ -118,6 +118,16 @@ $$
 
 另一方面，self-attention能够生成可解性更强的模型。我们对比了我们模型中的attention分布核当前讨论的例子，放在附录中。不仅每个attention head能独立学习不同的任务，许多还表现出与句法核语义结构相关的行为。
 
+**备注分析**
+
+Complexity per Layer: 每层计算复杂度
+
+Sequential Operations: 论文使用最小的序列来衡量并行化计算。对于传统的RNN，$x_1,x_2,...,x_n$序列需要逐步计算，而self-attention可以使用矩阵操作实现一步到位。
+
+Path length between long-range dependencies: Path length的含义表示计算一个序列长度为n的信息所经过的路径长度。RNN需要从1-n逐次计算，CNN需要增加卷积层来扩大感受野，而self-attention只需要一步矩阵计算。所以self-attention可以比RNN更好解决Long Term Dependency问题。当然，如果序列长度n>序列维度d，可以使用限制(restricted)Attention。
+
+此外，论文附录中表明Attention有更好的可解释性，能学习到一些语法和语义信息。
+
 # 5 Traning
 
 本届来介绍训练细节
