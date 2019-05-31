@@ -31,6 +31,7 @@ class feature_energing:
                  info: '是否打印信息' = True,
                  ranges: '数据范围' = {'C': [0, 1.2],
                                    'Si': [0, 4],
+                                   'T2': [1, 720],
                                    'T3': [25, 450],
                                    'Y': [900, 2500],
                                    },
@@ -84,10 +85,12 @@ class feature_energing:
         if self.info: print('--Del C not in range:', np.shape(df))
 
         #
+        # T2
         df = df[df.T2.notnull()]
-        # df = df[df.T2 >= self.ranges['T2'][0]]
-        # df = df[df.T2 <= self.ranges['T2'][1]]
-        if self.info: print('--Del T2 None', np.shape(df))
+        if 'T2' in self.ranges.keys():
+            df = df[df.T2 >= self.ranges['T2'][0]]
+            df = df[df.T2 <= self.ranges['T2'][1]]
+        if self.info:print('--Del T2 None', np.shape(df))
 
         #
         df.loc[(df.T3 == 0), 'T3'] = 25
