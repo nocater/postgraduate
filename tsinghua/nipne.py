@@ -58,7 +58,10 @@ def parse(tree, rr, cc):
         pdfs_ = tree.xpath('//a[contains(text(),"PDF")]/@href')
         pdfs = [base_url+i for i in pdfs_]
     
-    
+    abstracts = [etree.tostring(e).decode('utf8') for e in tree.xpath('//div[@class="abstract"]')]
+    if len(abstracts) == 0:
+        abstracts = [None] * len(titles)
+
     pages = tree.xpath('//span[@class="times"]/text()')
     if len(pages)>1:
         pages_start = pages
@@ -77,17 +80,19 @@ def parse(tree, rr, cc):
     
 #     print(len(titles),len(raw_titles),len(pages),len(pages_end),len(pdfs))
     assert len(titles) == len(raw_titles) == len(pages) == len(pages_end) == len(pdfs)
-    return raw_titles,titles,authors,pages_start,pages_end,pages,pdfs
+    return raw_titles,titles,abstracts,authors,pages_start,pages_end,pages,pdfs
 
 
 # response = requests.get('http://www.nipne.ro/rjp/2014_59_1-2.html')
-# tree = etree.HTML(response.text)
-# parse(tree, 59, '1-2')
+response = requests.get('http://www.nipne.ro/rjp/2018_63_1-2.html')
+tree = etree.HTML(response.text)
+# parse(tree, 63, '1-2')
 
 
 # In[ ]:
 
 
+# url 使用PDF唯一标识
 def generate(infos, url, year, vol, issue, venue, src=datasrc, issn=issn):
     
     def foo_author(author):
@@ -104,13 +109,17 @@ def generate(infos, url, year, vol, issue, venue, src=datasrc, issn=issn):
         return ''.join([i[0].lower() for i in title.split()])
     
     pubs = []
-    for raw_title,title,author,page_start,page_end,page,pdf in zip(*infos):
+    for raw_title,title,abstract,author,page_start,page_end,page,pdf in zip(*infos):
         pub = dict()
-        pub.update(zip(['url','raw_title','title','authors','venue','page_start','page_str','volume','issue','pdf_src','hash','ts','src','lang','sid','year','issn'],                           [[url], raw_title, title, foo_author(author), venue, page_start, page, vol, issue, pdf,                            foo_hash(title),str(now()), src, 'en', str(hash(title)), year,
+        pub.update(zip(['url','raw_title','title','authors','venue','page_start','page_str','volume','issue','pdf_src','hash','ts','src','lang','sid','year','issn'],                           [[pdf], raw_title, title, foo_author(author), venue, page_start, page, vol, issue, pdf,                            foo_hash(title),str(now()), src, 'en', str(hash(title)), year,
                            issn]))
         
         if page_end:
             pub['page_end'] = page_end
+        
+        if abstract:
+            pub['abstract'] = abstract.strip()
+            print(pub['abstract'])
 
 #         print(repr(pub))
 #         print('--------------')
@@ -119,9 +128,9 @@ def generate(infos, url, year, vol, issue, venue, src=datasrc, issn=issn):
     
     return pubs
 
-# r = parse(tree, 59, '1-2')
+# r = parse(tree, 63, '1-2')
 # venue = {'name':venue_name, 'type':1, 'sid':'1'}
-# r = generate(r, 'http://www.nipne.ro/rjp/2014_59_1-2.html', 2019, '59', '1-2', venue)
+# r = generate(r, 'http://www.nipne.ro/rjp/2014_59_1-2.html', 2019, '63', '1-2', venue)
 
 
 # In[ ]:
