@@ -1,23 +1,29 @@
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import requests
 from lxml import etree
-import os
 import time
 import datetime
+import os
+import json
 
 now = datetime.datetime.now
 
-# In[ ]:
+# In[2]:
 
 
 TIME = 2
+base_url = 'http://www.kovmat.sav.sk'
+datasrc = 'kovmat'
+venue_name = 'Kovove Materialy - Metallic Materials'
+issn = '0023-432X'
+data_file = './data/kovmat/'
 
 
-# In[ ]:
+# In[3]:
 
 
 def parse(tree, rr, cc):
@@ -85,7 +91,7 @@ def parse_abstract(url):
 # parse_abstract(['http://www.kovmat.sav.sk/abstract.php?rr=49&cc=6&ss=393'])
 
 
-# In[ ]:
+# In[4]:
 
 
 def generate(infos, year, venue, src='kovove', issn='0023-432X'):
@@ -96,11 +102,11 @@ def generate(infos, year, venue, src='kovove', issn='0023-432X'):
 
     def foo_author(author):
         a_list = []
-        for i, name in enumerate(author.split(',')):
+        for i, name in enumerate(author.split('.,')):
             a = dict()
             a['name'] = name.strip()
             a['pos'] = i
-            a['sid'] = hash(name)
+            a['sid'] = str(hash(name))
             a_list.append(a)
         return a_list
 
@@ -115,7 +121,7 @@ def generate(infos, year, venue, src='kovove', issn='0023-432X'):
              'page_str', 'volume', 'issue', 'pdf_src', 'hash', 'ts', 'src', 'lang', 'sid', 'year', 'issn'],
             [url, raw_title, foo_title(title), abstract, foo_author(author), venue,
              ';'.join([i.strip() for i in keyword.split(',')]), page_start, page_end, pp, vol, no, pdf, foo_hash(title),
-             str(now()), src, 'en', hash(title), year,
+             str(now()), src, 'en', str(hash(title)), year,
              issn]))
 
         if doi != '' or doi.strip() != '':
@@ -134,18 +140,38 @@ def generate(infos, year, venue, src='kovove', issn='0023-432X'):
 # r = generate(r, 2019, venue)
 
 
-# In[ ]:
+# In[5]:
 
 
 # Save
-def save(data):
-    if os.path.exists('./kovmat.json'):
-        with open('./kovmat.json', 'a') as f:
-            f.write(repr(data))
+def save(data, file):
+    if os.path.exists(file):
+        with open(file, 'a') as f:
+            # f.write(repr(data))
+            json.dump(data, f, ensure_ascii=False, indent=4)
     else:
-        with open('./kovmat.json', 'w') as f:
-            f.write(repr(data))
-    print('Saved!')
+        with open(file, 'w') as f:
+            # f.write(repr(data))
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    print(f'Saved records: {len(data)}')
+
+
+# In[6]:
+
+
+# import copy
+# save_data = copy.deepcopy(all_pubs)
+
+# for line in save_data:
+#     line['sid'] = str(line['sid'])
+#     for author in line['authors']:
+#         author['sid'] = str(author['sid'])
+
+#     year = line['venue']
+#     line['year'] = year
+#     line['venue'] = {'name':venue_name, 'type':1, 'sid':'1'}
+
+# save(save_data, data_file+'kovmat_1995-2019.json')
 
 
 # In[ ]:
@@ -154,6 +180,7 @@ def save(data):
 if __name__ == '__main__':
     all_pubs = []
     for rr in range(33, 59):
+        vol_pubs = []
         for cc in range(1, 7):
             url = f'http://www.kovmat.sav.sk/issue.php?rr={rr}&cc={cc}'
 
@@ -171,15 +198,18 @@ if __name__ == '__main__':
                 # 0 records
                 records = int(tree.xpath('.//i[contains(text(),"records ")]/text()')[0].split()[1])
                 if records <= 1: continue
-                print(f'found {records} records')
+                print(f'found  records: {records} ')
 
                 inofs = parse(tree, rr, cc)
-                pubs = generate(inofs, url, year, venue)
-                print(f'spider success! {len(pubs)}')
-                save(pubs, f'./kovmat_{year}.json')
-                all_pubs.extend(pubs)
+                pubs = generate(inofs, year, venue)
+                print(f'spider success: {len(pubs)}')
+
+                vol_pubs.extend(pubs)
             else:
                 print('ERROR! ', response.status_code)
-    #         break
-    #     break
-save(all_pubs, f'./kovmat_all.json')
+        save(vol_pubs, f'{data_file}kovmat_{year}.json')
+        all_pubs.extend(vol_pubs)
+
+print('All spidered!')
+save(all_pubs, f'{data_file}kovmat_all.json')
+
