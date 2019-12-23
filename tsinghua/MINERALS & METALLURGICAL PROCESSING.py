@@ -238,3 +238,21 @@ pub = generate(info, url, vol, no, year, venue)
 pubs.append(pub)
 save(pubs, data_file+f'{datasrc}_all.json')
 
+
+# # 去除空Abstract
+
+# In[171]:
+
+
+pubs = open(data_file+f'{datasrc}_all.json').readlines()
+pubs = eval(''.join(pubs))
+
+no_abs = 'This page does not have an abstract.'
+no_abs2 = 'Index to M&amp;MP Vol'
+for it in iter(pubs):
+    if no_abs in it['abstract'] or no_abs2 in it['abstract']:
+        it.pop('abstract')
+        print(it['url'][0])
+
+save(pubs, data_file+f'{datasrc}_all_abs.json')
+
