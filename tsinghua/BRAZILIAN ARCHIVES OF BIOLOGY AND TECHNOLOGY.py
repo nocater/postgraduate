@@ -155,7 +155,7 @@ def parse(info):
     if pdf_href:
         pub['pdf_src'] = pdf_href
     pub['hash'] = foo_hash(pub['title'])
-    pub['ts'] = str(now())
+    pub['ts'] = now().strftime('%Y-%m-%dT%H:%M:%S.000+0000')
     pub['src'] = datasrc
     pub['lang'] = info['_source']['bibjson']['journal']['language'][0].lower()
     pub['sid'] = str(hash(pub['title']))
@@ -191,19 +191,21 @@ save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v1.json')
 
 # # Parse Details
 
-# In[55]:
+# In[79]:
 
 
-def parse_details(url):
+def parse_details(url, debug=False):
     response = requests.get(url)
+    html = response.text
     if response.ok:
-        html = response.text
+        if 'Page not found!' in html: return None,None
+        
         tree = etree.HTML(html)
         
         # Page Type 1
         institutions = tree.xpath('//p[contains(@class,"aff")]//text()')
         if institutions:
-            print('Page Type 1')
+            if debug: print('Page Type 1')
             institutions = [i.strip() for i in institutions if i.strip()]
             institutions = {institutions[i]:institutions[i+1] for i in range(0, len(institutions), 2)}
             
@@ -220,21 +222,20 @@ def parse_details(url):
             references = [etree.tostring(i).decode('utf8').strip() for i in references]
             return authors_institutions, references
         else: # Page Type 2
-            print('Page Type 2')
-            index = tree.xpath('//a[text()="*"]/../../sup/text()')
-            if 'I' not in index:
-                index = tree.xpath('//a/sup[text()="*"]/../../sup/text()')
+            if debug: print('Page Type 2')
+            index = tree.xpath('//a[text()="*"]/../../sup/text()') or                     tree.xpath('//a/sup[text()="*"]/../../sup/text()') or                     tree.xpath('//a[text()="*"]/../sup/text()') or                    tree.xpath('//p/font/b/sup/text()')
             
             keys = tree.xpath('//p[position()<10]/font/sup/text()')
             values = tree.xpath('//p[position()<10]/font/sup/../text()')
             
-            index = [i.strip() for i in index if i.strip()]
+            index = [i.strip().replace(';', '') for i in index if i.strip()]
+            if debug:print('index:', index)
             keys = [i.strip() for i in keys if i.strip()]
             values = [i.strip() for i in values if i.strip()]
             
             authors_institutions = []
-            if len(keys) == len(values) == 0:
-                instititions = tree.xpath('//p[position()<10]/font/text()')
+            if len(keys) == len(values) == 0 or len(keys) != len(values):
+                instititions = tree.xpath('//p[position()<10]/font/text()') or values
                 instititions = [i.strip() for i in instititions if i.strip()]
                 instititions = ' '.join(instititions)
                 authors_institutions = [instititions]
@@ -247,7 +248,9 @@ def parse_details(url):
                     positions = [i.strip() for i in positions if i.strip()]
                     author_ins = [institutions[i.strip()] for i in positions]
                     authors_institutions.append(author_ins)
-        
+            
+            if debug: print(values)
+            
             references = re.findall('<!-- ref -->(.*?)<!-- end-ref -->', html)
             return authors_institutions, references
             
@@ -255,7 +258,6 @@ def parse_details(url):
         # [print(len(i), i) for i in authors_institutions]
         # print('r:', lens, len(authors_institutions))
 
-        
     else:
         print('parse_details error:', response.status_code, 'at ', url)
         return None,None
@@ -267,18 +269,22 @@ def parse_details(url):
 pubs = json.loads(''.join(open(f'{data_file}{venue_name.replace(" ", "_")}_v1.json').readlines()))
 # for i,p in zip(tqdm(range(len(pubs))), pubs):
 for i,p in enumerate(pubs):
+    # no authors skip
     if 'authors' not in p.keys(): continue
     
     institutions, references = parse_details(p['url'][-1])
+    
+    # no results skip
+    if institutions is None and references is None: continue
     
     if references:
         p['reference'] = references
     
     # 多个作者只有一个组织 直接copy times
-    if len(institutions)==1 and len(p["authors"])>1:
+    if institutions and len(institutions)==1 and len(p["authors"])>1:
         institutions = [institutions[0]] * len(p["authors"])
 
-    print(f'\r{i}/{len(pubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)}')
+    print(f'\r{i}/{len(pubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)}', end='')
     
     if institutions:
         if len(institutions) == len(p['authors']):
@@ -286,8 +292,14 @@ for i,p in enumerate(pubs):
                 p['authors'][i]['org'] = institutions[i]
     else:
         if 'authors' in p.keys() and len(p['authors'])>0:
-            print(f'Error institutions not match authors:{i} {p["url"][-1]}')
+            print(f'\nError institutions not match authors:{i} {p["url"][-1]}')
     
 #     print(f'\r{i}/{len(pubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)}', end='')
 save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v2.json')
+
+
+# In[76]:
+
+
+pubs[74]['url'][-1]
 
