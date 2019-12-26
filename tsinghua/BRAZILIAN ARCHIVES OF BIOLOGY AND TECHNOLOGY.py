@@ -191,7 +191,7 @@ save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v1.json')
 
 # # Parse Details
 
-# In[79]:
+# In[91]:
 
 
 def parse_details(url, debug=False):
@@ -208,13 +208,14 @@ def parse_details(url, debug=False):
             if debug: print('Page Type 1')
             institutions = [i.strip() for i in institutions if i.strip()]
             institutions = {institutions[i]:institutions[i+1] for i in range(0, len(institutions), 2)}
+            if debug: print('institutions:', institutions)
             
             authors = tree.xpath('//p[contains(@class,"author")]')
             authors_institutions = []
             for author in authors:
                 index = author.xpath('sup/a/text()')
                 index = [i.strip() for i in index if ('1'<=i.strip()<='9')]
-                author_ins = [institutions[i] for i in index]
+                author_ins = [institutions.get(i, None) for i in index]
                 authors_institutions.append(author_ins)
                 
                 
@@ -246,8 +247,9 @@ def parse_details(url, debug=False):
                     if len(positions) == 1:
                         positions = ind.split()
                     positions = [i.strip() for i in positions if i.strip()]
-                    author_ins = [institutions[i.strip()] for i in positions]
+                    author_ins = [institutions.get(i.strip(), None) for i in positions]
                     authors_institutions.append(author_ins)
+                    if debug: print('author_ins:', author_ins)
             
             if debug: print(values)
             
@@ -267,8 +269,8 @@ def parse_details(url, debug=False):
 
 
 pubs = json.loads(''.join(open(f'{data_file}{venue_name.replace(" ", "_")}_v1.json').readlines()))
-# for i,p in zip(tqdm(range(len(pubs))), pubs):
-for i,p in enumerate(pubs):
+subpubs = pubs[186:]
+for i,p in enumerate(subpubs):
     # no authors skip
     if 'authors' not in p.keys(): continue
     
@@ -284,12 +286,13 @@ for i,p in enumerate(pubs):
     if institutions and len(institutions)==1 and len(p["authors"])>1:
         institutions = [institutions[0]] * len(p["authors"])
 
-    print(f'\r{i}/{len(pubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)}', end='')
+    print(f'\r{i}/{len(subpubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)}', end='')
     
     if institutions:
         if len(institutions) == len(p['authors']):
             for i in range(len(institutions)):
-                p['authors'][i]['org'] = institutions[i]
+                if institutions[i] is not None and institutions[i]!=[None]:
+                    p['authors'][i]['org'] = institutions[i]
     else:
         if 'authors' in p.keys() and len(p['authors'])>0:
             print(f'\nError institutions not match authors:{i} {p["url"][-1]}')
@@ -298,8 +301,8 @@ for i,p in enumerate(pubs):
 save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v2.json')
 
 
-# In[76]:
+# In[88]:
 
 
-pubs[74]['url'][-1]
+pubs[187]['url'][-1]
 
