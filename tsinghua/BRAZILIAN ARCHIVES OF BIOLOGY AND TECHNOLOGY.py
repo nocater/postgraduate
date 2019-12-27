@@ -191,7 +191,7 @@ save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v1.json')
 
 # # Parse Details
 
-# In[91]:
+# In[ ]:
 
 
 def parse_details(url, debug=False):
@@ -224,7 +224,7 @@ def parse_details(url, debug=False):
             return authors_institutions, references
         else: # Page Type 2
             if debug: print('Page Type 2')
-            index = tree.xpath('//a[text()="*"]/../../sup/text()') or                     tree.xpath('//a/sup[text()="*"]/../../sup/text()') or                     tree.xpath('//a[text()="*"]/../sup/text()') or                    tree.xpath('//p/font/b/sup/text()')
+            index = tree.xpath('//a[text()="*"]/../../sup/text()') or                     tree.xpath('//a/sup[text()="*"]/../../sup/text()') or                     tree.xpath('//a[text()="*"]/../sup/text()') or                    tree.xpath('//p/font/b/sup/text()') or                    tree.xpath('//a/sup[text()="*"]/../../../sup/text()')
             
             keys = tree.xpath('//p[position()<10]/font/sup/text()')
             values = tree.xpath('//p[position()<10]/font/sup/../text()')
@@ -251,7 +251,7 @@ def parse_details(url, debug=False):
                     authors_institutions.append(author_ins)
                     if debug: print('author_ins:', author_ins)
             
-            if debug: print(values)
+            if debug: print('values:', values)
             
             references = re.findall('<!-- ref -->(.*?)<!-- end-ref -->', html)
             return authors_institutions, references
@@ -261,7 +261,7 @@ def parse_details(url, debug=False):
         # print('r:', lens, len(authors_institutions))
 
     else:
-        print('parse_details error:', response.status_code, 'at ', url)
+        print('\nparse_details error:', response.status_code, 'at ', url)
         return None,None
 
 
@@ -269,7 +269,7 @@ def parse_details(url, debug=False):
 
 
 pubs = json.loads(''.join(open(f'{data_file}{venue_name.replace(" ", "_")}_v1.json').readlines()))
-subpubs = pubs[186:]
+subpubs = pubs[186+1489:]
 for i,p in enumerate(subpubs):
     # no authors skip
     if 'authors' not in p.keys(): continue
