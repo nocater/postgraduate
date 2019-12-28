@@ -3,7 +3,7 @@
 
 # # BRAZILIAN ARCHIVES OF BIOLOGY AND TECHNOLOGY
 
-# In[2]:
+# In[ ]:
 
 
 import requests
@@ -17,7 +17,7 @@ import re
 now = datetime.datetime.now
 
 
-# In[3]:
+# In[ ]:
 
 
 TIME = 1
@@ -31,19 +31,17 @@ journal = venue_name
 venue = {'name':venue_name, 'type':1, 'sid':datasrc}
 
 
-# In[4]:
+# In[ ]:
 
 
 # Save
-def save(data, file):
-    if os.path.exists(file):
-        with open(file, 'a') as f:
-            # f.write(repr(data))
-            json.dump(data, f, ensure_ascii=False, indent=4)
-    else:
-        with open(file, 'w') as f:
-            # f.write(repr(data))
-            json.dump(data, f, ensure_ascii=False, indent=4)
+def save(data, file, overwrite=False):
+    mode = 'w'
+    if os.path.exists(file) and not overwrite:
+        mode = 'a'
+    with open(file, mode) as f:
+        # f.write(repr(data))
+        json.dump(data, f, ensure_ascii=False, indent=4)
     print(f'saved records: {len(data)}')
 
 
@@ -62,7 +60,7 @@ def save(data, file):
 # save(data, f'{data_file}origin.json')
 
 
-# # Parse Data
+# # Parse Data to v1
 
 # In[ ]:
 
@@ -155,7 +153,7 @@ def parse(info):
     if pdf_href:
         pub['pdf_src'] = pdf_href
     pub['hash'] = foo_hash(pub['title'])
-    pub['ts'] = now().strftime('%Y-%m-%dT%H:%M:%S.000+0000')
+    pub['ts'] = str(now()) # now().strftime('%Y-%m-%dT%H:%M:%S.000+0000')
     pub['src'] = datasrc
     pub['lang'] = info['_source']['bibjson']['journal']['language'][0].lower()
     pub['sid'] = str(hash(pub['title']))
@@ -189,7 +187,7 @@ for i,d in zip(tqdm(range(len(data[1979:]))),data[1979:]) :
 save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v1.json')
 
 
-# # Parse Details
+# # Parse Details to v2
 
 # In[ ]:
 
@@ -224,7 +222,7 @@ def parse_details(url, debug=False):
             return authors_institutions, references
         else: # Page Type 2
             if debug: print('Page Type 2')
-            index = tree.xpath('//a[text()="*"]/../../sup/text()') or                     tree.xpath('//a/sup[text()="*"]/../../sup/text()') or                     tree.xpath('//a[text()="*"]/../sup/text()') or                    tree.xpath('//p/font/b/sup/text()') or                    tree.xpath('//a/sup[text()="*"]/../../../sup/text()')
+            index = tree.xpath('//a[text()="*"]/../../sup/text()') or                     tree.xpath('//a/sup[text()="*"]/../../sup/text()') or                     tree.xpath('//a[text()="*"]/../sup/text()') or                    tree.xpath('//a/sup[text()="*"]/../../../sup/text()') or                    tree.xpath('//p/font/b/sup/text()') or                    tree.xpath('//p/b/font/sup/text()')
             
             keys = tree.xpath('//p[position()<10]/font/sup/text()')
             values = tree.xpath('//p[position()<10]/font/sup/../text()')
@@ -269,7 +267,7 @@ def parse_details(url, debug=False):
 
 
 pubs = json.loads(''.join(open(f'{data_file}{venue_name.replace(" ", "_")}_v1.json').readlines()))
-subpubs = pubs[186+1489:]
+subpubs = pubs
 for i,p in enumerate(subpubs):
     # no authors skip
     if 'authors' not in p.keys(): continue
@@ -286,7 +284,7 @@ for i,p in enumerate(subpubs):
     if institutions and len(institutions)==1 and len(p["authors"])>1:
         institutions = [institutions[0]] * len(p["authors"])
 
-    print(f'\r{i}/{len(subpubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)}', end='')
+    print(f'\r{i}/{len(subpubs)} authors:{len(p["authors"])}-{len(institutions)} references:{len(references)} ', end='')
     
     if institutions:
         if len(institutions) == len(p['authors']):
@@ -301,8 +299,8 @@ for i,p in enumerate(subpubs):
 save(pubs, f'{data_file}{venue_name.replace(" ", "_")}_v2.json')
 
 
-# In[88]:
+# In[ ]:
 
 
-pubs[187]['url'][-1]
+pubs[0]['url'][-1]
 
