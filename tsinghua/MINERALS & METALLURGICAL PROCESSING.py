@@ -241,7 +241,7 @@ save(pubs, data_file+f'{datasrc}_all.json')
 
 # # 去除空Abstract
 
-# In[171]:
+# In[172]:
 
 
 pubs = open(data_file+f'{datasrc}_all.json').readlines()
@@ -249,10 +249,37 @@ pubs = eval(''.join(pubs))
 
 no_abs = 'This page does not have an abstract.'
 no_abs2 = 'Index to M&amp;MP Vol'
+no_abs3 = 'Index to Volume'
 for it in iter(pubs):
-    if no_abs in it['abstract'] or no_abs2 in it['abstract']:
+    if no_abs in it['abstract'] or         no_abs2 in it['abstract'] or         no_abs3 in it['abstract'] or         it['url'][0] == 'http://mmp.smenet.org/abstract.cfm?aid=5084':
         it.pop('abstract')
         print(it['url'][0])
 
-save(pubs, data_file+f'{datasrc}_all_abs.json')
+save(pubs, data_file+f'{datasrc}_all_no_non_abs.json')
+
+
+# # Details
+
+# In[ ]:
+
+
+import pprint
+import json
+import os
+pubs = json.loads(''.join(open('./MINERALS_&_METALLURGICAL_PROCESSING_all_no_non_abs.json').readlines()))
+
+for pub in pubs:
+    pub['sid'] = pub['url'][0].split('aid=')[1]
+    pub['src'] = 'mmp.smenet.org'
+    
+    if 'authors' not in pub.keys(): continue
+
+    for author in pub['authors']:
+        if author['name'][-1] == ',':
+            author['name'] = author['name'][:-1]
+        author.pop('sid')
+        
+        
+save(pubs, './MINERALS_&_METALLURGICAL_PROCESSING_sid&name.json', overwrite=True)
+pubs[0]
 
