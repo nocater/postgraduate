@@ -42,5 +42,12 @@ def exceltomysql():
     # planload = pd.read_excel(PATH+'planload.xlsx')
     # planload.rename(columns={'   ':'id'}, inplace=True)
 
+def shangqing():
+    pass
+    df = pd.read_excel(r'C:\Users\chenshuai\Desktop\acl_group.xlsx')
+    print(df.columns)
+    engine = create_engine("mysql+pymysql://root:2wsx3edc@localhost:3306/shenhua?charset=utf8", echo=True)
+    df.to_sql('acl', con=engine, index=False)
+
 if __name__ == '__main__':
-    analysisCD_S()
+    shangqing()
